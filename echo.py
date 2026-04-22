@@ -5,7 +5,7 @@ import traceback
 import datetime as dt
 from datetime import datetime
 from pathlib import Path
-
+from decimal import Decimal, ROUND_HALF_UP
 import pandas as pd
 import numpy as np
 import streamlit as st
@@ -18,7 +18,15 @@ a = 2
 # def extract():
 #VARIABLES
 lyear = 2026
-lmonth = 3
+lmonth = 3 #LAST MONTH OF THE SAID QTR
+qmonths = [1,2,3] #MONTHS IN THE QUARTER
+
+vyear = 2025 #VL DATE 6 MONTHS AGO
+vmonth =9  #VL MONTH 6 MONTHS AGO
+
+vmonths = [10,11,12]
+
+
 if a == 2:
     cola,colb,colc = st.columns([1,3,1])
     colb.subheader('PIVOT TABLES FOR ECHO DATA')
@@ -45,11 +53,12 @@ if a == 2:
                     st.session_state.df = pd.read_csv(file)
                     df = st.session_state.df
     
-                    df = df.rename(columns= {'ART  ':'ART',  'RD  ':'RD',  'VD  ':'VD', 'LD  ': 'LD','ARVS  ':'ARVS', 'ARVD ':'ARVD',
-         'AG  ':'AG','WT  ':'WT'})#, 'TPT ': 'TPT'})
-                    df = df.rename(columns= {'ART ':'ART', 'RD ':'RD', 'VD ':'VD', 'LD ': 'LD','WT ': 'WT','ARVS ':'ARVS',
-                            'AG ':'AG', 'ARVD ':'ARVD'})#, 'TPT  ': 'TPT'})
-                    columns = ['ART','AG','AS', 'VD', 'RD','LD','WT', 'ARVS', 'ARVD']
+                    df = df.rename(columns= {'ART  ':'ART',  'RD  ':'RD', 'DSD  ':'DSD', 'VD  ':'VD', 'LD  ': 'LD','ARVS  ':'ARVS', 'ARVD ':'ARVD','BCD4  ':'BCD4','AG  ':'AG', 'AS  ':'AS', 'WT  ':'WT', 'VR  ':'VR'})#, 'TPT ': 'TPT'})  
+
+                    df = df.rename(columns= {'ART ':'ART', 'RD ':'RD', 'VD ':'VD', 'LD ': 'LD','WT ':'WT','ARVS ':'ARVS',
+                            'AG ':'AG', 'ARVD ':'ARVD', 'AS ':'AS', 'VR ':'VR', 'BCD4 ':'BCD4', 'DSD ':'DSD'})
+                    
+                    columns = ['ART','AG','AS', 'VD', 'RD','LD','WT', 'ARVS', 'ARVD', 'BCD4', 'VR','DSD']
                     cols = df.columns.to_list()
                     needed = set(columns)
                     there = set(cols)
@@ -64,12 +73,11 @@ if a == 2:
                             st.stop()
                     st.session_state.reader= True
     if st.session_state.reader:
-                        st.session_state.df = st.session_state.df.rename(columns= {'ART  ':'ART', 'AS  ':'AS', 'RD  ':'RD',  'VD  ':'VD', 'LD  ': 'LD','ARVS  ':'ARVS','ARVD  ':'ARVD',
-                'AG  ':'AG'})
-                        st.session_state.df = st.session_state.df.rename(columns= {'ART ':'ART', 'RD ':'RD', 'VD ':'VD',  'LD ': 'LD', 'AG ':'AG', 'ARVS ':'ARVS', 'ARVD ':'ARVD'})#, 'TPT  ': 'TPT'})
+                        st.session_state.df = st.session_state.df.rename(columns= {'ART  ':'ART', 'AS  ':'AS', 'RD  ':'RD', 'DSD  ':'DSD', 'VD  ':'VD', 'LD  ': 'LD','ARVS  ':'ARVS','ARVD  ':'ARVD','AG  ':'AG','BCD4  ':'BCD4','VR  ':'VR'})
+                        st.session_state.df = st.session_state.df.rename(columns= {'ART ':'ART', 'RD ':'RD', 'DSD ':'DSD','VD ':'VD',  'LD ': 'LD', 'AG ':'AG', 'ARVS ':'ARVS', 'ARVD ':'ARVD', 'BCD4 ':'BCD4', 'VR ':'VR'})
                         df = st.session_state.df.copy()
                     
-                        df = df[['ART','AG','AS', 'VD', 'RD','LD','WT', 'ARVS', 'ARVD']].copy()
+                        df = df[['ART','AG','AS', 'VD', 'RD','LD','WT', 'ARVS', 'ARVD', 'BCD4', 'VR', 'DSD']].copy()
                         
                         df['ART'] = df['ART'].astype(str)
                         df['A'] = df['ART'].str.replace('[^0-9]', '', regex=True)
@@ -111,37 +119,36 @@ if a == 2:
                    
                         df['VD'] = df['VD'].astype(str)
                         df['LD'] = df['LD'].astype(str)
+                        df['AS'] = df['AS'].astype(str)
                                     
-                        y = pd.DataFrame({'ART' :['2','3','4','5'], 'RD':['1-1-1',1,'1/1/1','3 8 2001'], 
+                        y = pd.DataFrame({'ART' :['2','3','4','5'], 'RD':['1-1-1',1,'1/1/1','3 8 2001'], 'AS':['1-1-1',1,'1/1/1','3 8 2001'],
                                         'VD':['1-1-1',1,'1/1/1','3 8 2001'], 'LD':['1-1-1',1,'1/1/1','3 8 2001'],'ARVS':['1-1-1',1,'1/1/1','3 8 2001']})                        
                         
                         df['RD'] = df['RD'].astype(str)
-                
-                        df['VD'] = df['VD'].astype(str)
-                        
+                        df['AS'] = df['AS'].astype(str)
+                        df['VD'] = df['VD'].astype(str)      
                         df['LD'] = df['LD'].astype(str)
                     
                         df['RD'] = df['RD'].str.replace('00:00:00', '', regex=True)
-                    
+                        df['AS'] = df['AS'].str.replace('00:00:00', '', regex=True)
                         df['VD'] = df['VD'].str.replace('00:00:00', '', regex=True)
-                        
                         df['LD'] = df['LD'].str.replace('00:00:00', '', regex=True)
                      
                         df["RD"] = df["RD"].str.replace(r"\s*\d{1,2}:\d{2}.*$", "", regex=True).str.strip()
-                       
+                        df["AS"] = df["AS"].str.replace(r"\s*\d{1,2}:\d{2}.*$", "", regex=True).str.strip()
                         df["VD"] = df["VD"].str.replace(r"\s*\d{1,2}:\d{2}.*$", "", regex=True).str.strip()
+                        df["LD"] = df["LD"].str.replace(r"\s*\d{1,2}:\d{2}.*$", "", regex=True).str.strip() 
                        
                         df["RD"] = df["RD"].str.replace(r"\s*\..*$", "", regex=True).str.strip()
-                    
                         df["VD"] = df["VD"].str.replace(r"\s*\..*$", "", regex=True).str.strip()
-                        
+                        df["LD"] = df["LD"].str.replace(r"\s*\..*$", "", regex=True).str.strip()
+                        df["AS"] = df["AS"].str.replace(r"\s*\..*$", "", regex=True).str.strip()
+
                         df = pd.concat([df,y])
                         df = df.copy()
                         
                         df['RD'] = df['RD'].astype(str) ###
-                        
                         df['VD'] = df['VD'].astype(str) ###
-                        
                         df['LD'] = df['LD'].astype(str)
                         df['ARVS'] = df['ARVS'].astype(str)
                 
@@ -197,9 +204,6 @@ if a == 2:
                             pass
                         df = pd.concat([A,B,D,E])  
                         df = df.copy()
-                        
-          
-
 
 
                         # SORTING THE LAST ENCOUNTER DATES
@@ -226,6 +230,7 @@ if a == 2:
                             pass
                         df = pd.concat([A,B,D,E])
 
+                        #SORTING THE REGIMENS
                         A = df[df['ARVS'].str.contains('-')].copy()
                         a = df[~df['ARVS'].str.contains('-')].copy()
                         B = a[a['ARVS'].str.contains('/')].copy()
@@ -245,41 +250,46 @@ if a == 2:
                         except:
                             pass
                         df = pd.concat([A,B,D,E]) 
-                        #st.write(df.head(10))
+                    
+
+                        # SPLITTING ART START DATE
+                        df['AS'] = df['AS'].astype(str)
+                        A = df[df['AS'].str.contains('-')].copy()
+                        a = df[~df['AS'].str.contains('-')].copy()
+                        B = a[a['AS'].str.contains('/')].copy()
+                        C = a[~a['AS'].str.contains('/')].copy()
+                        E = C[C['AS'].str.contains(' ')].copy()
+                        D = C[~C['AS'].str.contains(' ')].copy()
+                        A[['Ayear', 'Amonth', 'Aday']] = A['AS'].str.split('-', expand = True)
+                        B[['Ayear', 'Amonth', 'Aday']] = B['AS'].str.split('/', expand = True)
+                        try:
+                            D['AS'] = pd.to_numeric(D['AS'], errors='coerce')
+                            D['AS'] = pd.to_datetime(D['AS'], origin='1899-12-30', unit='D', errors='coerce')
+                            D['AS'] =  D['AS'].astype(str)
+                            D[['Ayear', 'Amonth', 'Aday']] = D['AS'].str.split('-', expand = True)
+                        except:
+                            pass
+                        try:  
+                            E['AS'] = pd.to_datetime(E['AS'],format='%d %m %Y', errors='coerce')
+                            E['AS'] =  E['AS'].astype(str)
+                            E[['Ayear', 'Amonth', 'Aday']] = E['AS'].str.split('-', expand = True)
+                        except:
+                            pass
+                        df = pd.concat([A,B,D,E]) 
                        
   
 
                         df['RD'] = df['RD'].astype(str)
-   
+                        df['AS'] = df['AS'].astype(str)
                         df['VD'] = df['VD'].astype(str)
-                      
                         df['LD'] = df['LD'].astype(str)
                         
             #             #Clearing NaT from te dates
                      
                         df['RD'] = df['RD'].str.replace('NaT', '',regex=True)
-                       
+                        df['AS'] = df['AS'].str.replace('NaT', '',regex=True)
                         df['VD'] = df['VD'].str.replace('NaT', '',regex=True)
-                       
-                        df['LD'] = df['LD'].str.replace('NaT', '',regex=True)
-                      
-                        df[['Vyear', 'Vmonth', 'Vday']] =df[['Vyear', 'Vmonth', 'Vday']].apply(pd.to_numeric, errors = 'coerce') 
-                        df['Vyear'] = df['Vyear'].fillna(994)
-                        a = df[df['Vyear']>31].copy()
-                        b = df[df['Vyear']<32].copy()
-                        #c = df[]
-                        b = b.rename(columns={'Vyear': 'Vday2', 'Vday': 'Vyear'})
-                        b = b.rename(columns={'Vday2': 'Vday'})
-                        df = pd.concat([a,b])
-                        
-                        # #SORTING THE RETURN VISIT DATE YEARS
-                        df[['Rday', 'Ryear']] = df[['Rday', 'Ryear']].apply(pd.to_numeric, errors='coerce')
-                        df['Ryear'] = df['Ryear'].fillna(994)
-                        a = df[df['Ryear']>31].copy()
-                        b = df[df['Ryear']<32].copy()
-                        b = b.rename(columns={'Ryear': 'Rday2', 'Rday': 'Ryear'})
-                        b = b.rename(columns={'Rday2': 'Rday'})
-                        df = pd.concat([a,b])
+                        df['LD'] = df['LD'].str.replace('NaT', '',regex=True)       
                            
                  
                         # #SORTING THE LAST ENCOUNTER
@@ -291,6 +301,35 @@ if a == 2:
                         b = b.rename(columns={'Lday2': 'Lday'})
                         df = pd.concat([a,b])
                         df = df.copy()
+
+                        # #SORTING THE RETURN VISIT DATE YEARS
+                        df[['Rday', 'Ryear']] = df[['Rday', 'Ryear']].apply(pd.to_numeric, errors='coerce')
+                        df['Ryear'] = df['Ryear'].fillna(994)
+                        a = df[df['Ryear']>31].copy()
+                        b = df[df['Ryear']<32].copy()
+                        b = b.rename(columns={'Ryear': 'Rday2', 'Rday': 'Ryear'})
+                        b = b.rename(columns={'Rday2': 'Rday'})
+                        df = pd.concat([a,b])
+
+                        #SORTING THE VIRAL LOAD MONTHS AND YEAR
+                        df[['Vyear', 'Vmonth', 'Vday']] =df[['Vyear', 'Vmonth', 'Vday']].apply(pd.to_numeric, errors = 'coerce') 
+                        df['Vyear'] = df['Vyear'].fillna(994)
+                        a = df[df['Vyear']>31].copy()
+                        b = df[df['Vyear']<32].copy()
+                        #c = df[]
+                        b = b.rename(columns={'Vyear': 'Vday2', 'Vday': 'Vyear'})
+                        b = b.rename(columns={'Vday2': 'Vday'})
+                        df = pd.concat([a,b])
+
+                        #SORTING THE ART START YEARS
+                        df[['Ayear', 'Amonth', 'Aday']] =df[['Ayear', 'Amonth', 'Aday']].apply(pd.to_numeric, errors = 'coerce')
+                        df['Ayear'] = df['Ayear'].fillna(994)
+                        a = df[df['Ayear']>31].copy()
+                        b = df[df['Ayear']<32].copy()
+                        b = b.rename(columns={'Ayear': 'Aday2', 'Aday': 'Ayear'})
+                        b = b.rename(columns={'Aday2': 'Aday'})
+                        df = pd.concat([a,b])
+                        dfe = df.shape[0]
 
                         def ager(a):
                             if a < 5:
@@ -318,6 +357,7 @@ if a == 2:
                              else:
                                   return '>= 30 KG'
                         datyw =pd.DataFrame({'WEIGHT BANDS': ['3-5.9 KG', '6-9.9 KG', '10-13.9 KG', '14-19.9 KG', '20-24.9 KG', '25-29.9 KG', '>= 30 KG']})
+                        
                         datya = pd.DataFrame({'AGE BANDS': ['< 5 Yrs', '5-9 Yrs', '10-14 Yrs', '15-19 Yrs']})
                         wmapper = {'3-5.9 KG':1, '6-9.9 KG':2, '10-13.9 KG':3, '14-19.9 KG':4, '20-24.9 KG':5, '25-29.9 KG':6, '>= 30 KG':7}
                         wmapper2 = {'3-5.9 KG':1, '6-9.9 KG':2, '10-13.9 KG':3, '14-19.9 KG':4, '20-24.9 KG':5}
@@ -385,7 +425,7 @@ if a == 2:
                             #children on ABC-DTG]
                             #st.write(dfc[['ART','AG', 'WT', 'ARVS']])
                             dfc['WT'] = pd.to_numeric(dfc['WT'], errors='coerce')
-                            dfc = dfc[((dfc['WT']<6) | (dfc['WT']>24.9))].copy()
+                            dfc = dfc[((dfc['WT']>2.9) | (dfc['WT']<6))].copy()
                             a3 = dfc.shape[0]
                             if a3 > 0:
                                  #st.write(dfc[['ART', 'AG', 'WT', 'ARVS']].reset_index(drop=True))
@@ -497,53 +537,369 @@ if a == 2:
                             #CAME LAST MONTH
                             df[['Lmonth', 'Lyear']] = df[['Lmonth', 'Lyear']].apply(pd.to_numeric, errors='coerce')
                             dff = df[((df['Lyear']==lyear)  & (df['Lmonth']==lmonth))].copy()
+                            aptc = dff.shape[0]
                             #st.write(dff[['ART', 'LD', 'WT', 'ARVS', 'TDF', '3TC', 'DTG']].reset_index(drop=True))
                             
                             if dff.shape[0]>0: #if there are clients that attended
-                                 #OF THOSE WHO ATTENDED, HOW MANY ARE ON ABC DTG
-                                 dff[['TDF', 'DTG']] = dff[['TDF', 'DTG']].astype(str)
-                                 dffp = dff[((dff['TDF']=='ABC') & (dff['DTG']=='DTG'))].copy() #ON ABC/DTG
-                                 dfaz = dff[((dff['TDF']=='AZT') & (dff['3TC']=='3TC'))].copy()   #ON AZT/3TC 
+                                p4 = 0
+                                #OF THOSE WHO ATTENDED, HOW MANY ARE ON ABC DTG
+                                dff[['TDF', 'DTG']] = dff[['TDF', 'DTG']].astype(str)
+                                dffp = dff[((dff['TDF']=='ABC') & (dff['DTG']=='DTG'))].copy() #ON ABC/DTG
+                                dfaz = dff[((dff['TDF']=='AZT') & (dff['3TC']=='3TC'))].copy()   #ON AZT/3TC 
+                                dfdar = dff[(dff['DTG']=='DRV/r')].copy()   #ON TDF/3TC
 
-                                 #OF THOSE ON ABC DTG, HOW MANY ARE FOR PALD
-                                 dffp['WT'] = pd.to_numeric(dffp['WT'], errors='coerce')
-                                 dfsp = dffp[(dffp['WT']>2.9) & (dffp['WT']<25)].copy()
-                                 dfnp = dffp[((dffp['WT']<3) | (dffp['WT']>24.9))].copy()
+                                #OF THOSE ON ABC DTG, HOW MANY ARE FOR PALD
+                                dffp['WT'] = pd.to_numeric(dffp['WT'], errors='coerce')
+                                dfsp = dffp[(dffp['WT']>5.9) & (dffp['WT']<25)].copy()
+                                dfnp = dffp[(dffp['WT']<6)].copy()
 
-                                 if dfsp.shape[0]>0: #if there are pld clients that attended
-                                    st.write(dfsp[['ART', 'AG','LD', 'ARVS','ARVD']])
+                                if dfsp.shape[0]>0: #if there are pld clients that attended
+                                    #st.write(dfsp[['ART', 'AG','LD', 'ARVS','ARVD']])
                                        
                                     dfsp['ARVD'] = pd.to_numeric(dfsp['ARVD'], errors='coerce')
 
                                     dfp1 = dfsp[dfsp['ARVD']<180].copy() #USED THE PACK OF 90
                                     if dfp1.shape[0]>0:
-                                        p1 = dfp1.shape[0]
+                                        p1 = dfp1['ARVD'].sum()
+                                        p1 = p1/90
+                                        p1 = int(Decimal(p1).quantize(0, rounding=ROUND_HALF_UP))
                                     else:
                                         p1 = 0
 
                                     dfp2 = dfsp[dfsp['ARVD']==180].copy() #USED THE PACK OF 180
                                     if dfp2.shape[0]>0:
-                                        p2 = dfp2.shape[0]
+                                        p2 = dfp2['ARVD'].sum()
+                                        p2 = p2/180 
+                                        p2 = int(Decimal(p2).quantize(0, rounding=ROUND_HALF_UP))
+                                    
                                     else:
                                         p2 = 0
-
-
-                                 else:
+                                else:
                                     p1 = 0
                                     p2 = 0
+                                if dfnp.shape[0]>0: #if there are non pld clients that attended
+                                    st.write(dfnp[['ART', 'AG','LD', 'ARVS','ARVD']])
+                                    dfnp['ARVD'] = pd.to_numeric(dfnp['ARVD'], errors='coerce')
+                                    p3 = dfnp['ARVD'].sum()
+                                    p3 = p3/30
+                                    p3 = int(Decimal(p3).quantize(0, rounding=ROUND_HALF_UP))
+                                else:
+                                    p3 = 0
+                                #THOSE ON AZT/3TC
+                                if dfaz.shape[0]>0:
+                                    st.write(dfaz[['ART', 'AG','LD', 'ARVS','ARVD']])
+                                    dfaz['ARVD'] = pd.to_numeric(dfaz['ARVD'], errors='coerce')
+                                    p5 = dfaz['ARVD'].sum()
+                                    p5 = p5/60
+                                    p5 = int(Decimal(p5).quantize(0, rounding=ROUND_HALF_UP))
+                                else:
+                                    p5 = 0 
+
+                                if dfdar.shape[0]>0: #THOSE ON DRV/r
+                                    #st.write(dfdar[['ART', 'AG','LD', 'ARVS','ARVD']])
+                                    dfdar['ARVD'] = pd.to_numeric(dfdar['ARVD'], errors='coerce')
+                                    p6 = dfdar['ARVD'].sum()
+                                    p6 = p6/60
+                                    p6 = int(Decimal(p6).quantize(0, rounding=ROUND_HALF_UP))  
+                                else:
+                                    p6 = 0           
+
                             else:
                                  p1 = 0
                                  p2 = 0
+                                 p3 = 0
+                                 p4 = 0
+                                 p5 = 0
+                                 p6 = 0
 
+                            ###TX NEWS
+                            df[['Ayear', 'Amonth']] = df[['Ayear', 'Amonth']].apply(pd.to_numeric, errors='coerce')
+                            dftn = df[((df['Ayear']==lyear)  & (df['Amonth'].isin(qmonths)))].copy()
+
+                            if dftn.shape[0]>0: #IF THEY ARE THERE
+                                news = dftn[['ART', 'AS', 'RD', 'BCD4']].copy()
+                                st.write(dftn[['ART', 'AG','RD', 'ARVS','BCD4']])
+                                dfg1 = dftn.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                dfg1 = pd.merge(dfg1, datya, on='AGE BANDS', how='right')
+                                dfg1['TOTAL'] = dfg1['TOTAL'].fillna(0)
+                                dfg1['R'] = dfg1['AGE BANDS'].map(amapper)
+                                dfg1 = dfg1.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                #st.write(dfg1)
+                                dftn['BCD4'] = pd.to_numeric(dftn['BCD4'], errors='coerce') 
+
+                                #THOSE WITH LOW CD4 COUNT
+                                dfcd = dftn[dftn['BCD4']<200].copy()
+                                if dfcd.shape[0]>0:
+                                    lows = dfcd[['ART', 'AS', 'RD', 'BCD4']].copy()
+                                    #st.write(dfcd[['ART', 'AG','AS', 'ARVS','BCD4']])
+                                    dfg2 = dfcd.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                    dfg2 = pd.merge(dfg2, datya, on='AGE BANDS', how='right')
+                                    dfg2['TOTAL'] = dfg2['TOTAL'].fillna(0)
+                                    dfg2['R'] = dfg2['AGE BANDS'].map(amapper)
+                                    dfg2 = dfg2.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                    #st.write(dfg2)
+                                else:
+                                     dfg2 = datya.copy()
+                                     dfg2['TOTAL'] = 0
+                                     #st.write(dfg2)
+
+                                
+                            else:
+                                 dfg1 = datya.copy()
+                                 dfg1['TOTAL'] = 0
+                                 #st.write(dfg1)
+                                 dfg2 = dfg1.copy()
+
+                            #ON APPOINTMENT
+                            df[['Rmonth', 'Ryear']] = df[['Rmonth', 'Ryear']].apply(pd.to_numeric, errors='coerce')
+                            dfm = df[((df['Ryear']==lyear)& (df['Rmonth']==lmonth))].copy()
+                            aptm = dfm.shape[0]
+
+                            apt = aptm + aptc
+                            if apt>0:
+                                 dfh1 = pd.DataFrame({'CALHIV was this HF expecting': [apt]})
+                                 dfh2 = pd.DataFrame({'how many actually returned': [aptc]})
+                            else:
+                                dfh1 = pd.DataFrame({'CALHIV was this HF expecting': [0]})
+                                dfh2 = pd.DataFrame({'how many actually returned': [0]})
+
+                            #VL DATA
+                            df[['Vyear', 'Vmonth']] = df[['Vyear', 'Vmonth']].apply(pd.to_numeric, errors='coerce')
+                            dfvl = df[((df['Vyear']>vyear)|((df['Vyear']==vyear) & (df['Vmonth']>vmonth)))].copy()
+                            dfnvl = df[((df['Vyear']<vyear)|((df['Vyear']==vyear) & (df['Vmonth']<=vmonth)))].copy()
+                          
+
+                            if dfvl.shape[0]>0: #THOSE WITH VLS
+                                #st.write(dfvl[['ART', 'AG','VD', 'ARVS','VR']])
+                                dfi = dfvl.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                dfi = pd.merge(dfi, datya, on='AGE BANDS', how='right')
+                                dfi['TOTAL'] = dfi['TOTAL'].fillna(0)
+                                dfi['R'] = dfi['AGE BANDS'].map(amapper)
+                                dfi = dfi.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                #st.write(dfi)
+
+                                dfvl['VR'] = pd.to_numeric(dfvl['VR'], errors='coerce').fillna(0)
+                                dfvls = dfvl[dfvl['VR']<1000].copy() #SUPPRESSED
+                                dfvlns = dfvl[dfvl['VR']>=1000].copy() #NONE SUPPESSED
+
+                                if dfvls.shape[0]>0:
+                                    #st.write(dfvls[['ART', 'AG','VD', 'ARVS','VR']])
+                                    dfi3 = dfvls.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                    dfi3 = pd.merge(dfi3, datya, on='AGE BANDS', how='right')
+                                    dfi3['TOTAL'] = dfi3['TOTAL'].fillna(0)
+                                    dfi3['R'] = dfi3['AGE BANDS'].map(amapper)
+                                    dfi3 = dfi3.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                    #st.write(dfi3)
+                                else:
+                                    dfi3 = datya.copy()
+                                    dfi3['TOTAL'] = 0
+                                    #st.write(dfj)
+
+                                if dfvlns.shape[0]>0:
+                                    #st.write(dfvls[['ART', 'AG','VD', 'ARVS','VR']])
+                                    dfi4 = dfvlns.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                    dfi4 = pd.merge(dfi4, datya, on='AGE BANDS', how='right')
+                                    dfi4['TOTAL'] = dfi4['TOTAL'].fillna(0)
+                                    dfi4['R'] = dfi4['AGE BANDS'].map(amapper)
+                                    dfi4 = dfi4.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                    #st.write(dfj)
+                                else:
+                                    dfi4 = datya.copy()
+                                    dfi4['TOTAL'] = 0
+                                    #st.write(dfj)
+                            else:
+                                 dfi = datya.copy()
+                                 dfi['TOTAL'] = 0
+                                 dfi3 = dfi.copy()
+                                 dfi4 = dfi.copy()
+                            if dfnvl.shape[0] > 0:
+                                    #st.write(dfnvl[['ART', 'AG','VD', 'ARVS','VR']])
+                                    dfi2 = dfnvl.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                    dfi2 = pd.merge(dfi2, datya, on='AGE BANDS', how='right')
+                                    dfi2['TOTAL'] = dfi2['TOTAL'].fillna(0)
+                                    dfi2['R'] = dfi2['AGE BANDS'].map(amapper)
+                                    dfi2 = dfi2.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                    #st.write(dfi2)
+                            else:
+                                dfi2 = datya.copy()
+                                dfi2['TOTAL'] = 0 
+
+                            if dfvl.shape[0]>0:
+                                dfvl[['Vyear', 'Vmonth']] = dfvl[['Vyear', 'Vmonth']].apply(pd.to_numeric, errors='coerce')
+                                #VLS DOE LAST MONTH, DUE FOR IAC
+                                dfvj = dfvl[((dfvl['Vyear']== vyear) & (dfvl['Vmonth'].isin(vmonths)))].copy()     
+                                dfvj['VR'] = pd.to_numeric(dfvj['VR'], errors = 'coerce')
+                                #LLVs
+                                dfvk = dfvj[((dfvj['VR']>200) & (dfvj['VR']<1000))].copy() 
+                                dfvk['VR'] = pd.to_numeric(dfvk['VR'], errors = 'coerce')
+                                dfvk = dfvk[dfvk['VR']!=400].copy()
+
+                                #HLVS
+                                dfvj = dfvj[dfvj['VR']>999].copy()
+
+                                if dfvj.shape[0]>0: #THE HLVS
+                                     #st.write(dfvj[['ART', 'AG','VD', 'ARVS','VR']])
+                                    hlvs = dfvj[['ART', 'RD', 'VD', 'VR']].copy()
+                                    dfj1 = dfvj.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                    dfj2 = pd.merge(dfj1, datya, on='AGE BANDS', how='right')
+                                    dfj1['TOTAL'] = dfj1['TOTAL'].fillna(0)
+                                    dfj1['R'] = dfj1['AGE BANDS'].map(amapper)
+                                    dfj1 = dfj1.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                    #st.write(dfj1)
+                                else:
+                                    dfj1 = datya.copy()
+                                    dfj1['TOTAL'] = 0
+
+                                if dfvk.shape[0]>0: #THE LLVS
+                                     #st.write(dfvk[['ART', 'AG','VD', 'ARVS','VR']])
+                                    llvs = dfvk[['ART', 'RD', 'VD', 'VR']].copy()
+                                    dfk1 = dfvk.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                    dfk2 = pd.merge(dfk1, datya, on='AGE BANDS', how='right')
+                                    dfk1['TOTAL'] = dfk1['TOTAL'].fillna(0)
+                                    dfk1['R'] = dfk1['AGE BANDS'].map(amapper)
+                                    dfk1 = dfk1.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                    # st.write(dfk1)
+
+                                else:
+                                    dfk1 = datya.copy()
+                                    dfk1['TOTAL'] = 0
+                                    # st.write(dfk1)
+                            else:
+                                 dfj1 = datya.copy()
+                                 dfj1['TOTAL'] = 0
+                                 dfk1 = dfj1.copy()
+                                #  st.writ(dfk1)
+                            dfL = pd.DataFrame({ 'Total number of CALHIV currently recieving care at this HF?': [b11]})
+                           
+                           #MMD SECTION
+                            df['ARVD'] = pd.to_numeric(df['ARVD'], errors = 'coerce')
+
+                            dfL1 = df[df['ARVD']>89].copy()
+                            dfL1['ARVD'] = pd.to_numeric(dfL1['ARVD'], errors = 'coerce')
+
+                            #3 months
+                            dfL12 = dfL1[dfL1['ARVD'] < 179].copy()
+                            if dfL12.shape[0] > 0:
+                                    #st.write(dfL12[['ART', 'AG','VD', 'ARVS','VR']])
+                                    dfL12 = dfL12.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                    dfL12 = pd.merge(dfL12, datya, on='AGE BANDS', how='right')
+                                    dfL12['TOTAL'] = dfL12['TOTAL'].fillna(0)
+                                    dfL12['R'] = dfL12['AGE BANDS'].map(amapper)
+                                    dfL12 = dfL12.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                    # st.write(dfL12)
+                            else:
+                                dfL12 = datya.copy()
+                                dfL12['TOTAL'] = 0
+                                 
+                            #6 MONTHS
+                            dfL13 = dfL1[dfL1['ARVD'] > 180].copy()
+                            if dfL13.shape[0] > 0:
+                                    #st.write(dfL13[['ART', 'AG','VD', 'ARVS','VR']])
+                                    dfL13 = dfL13.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                    dfL13 = pd.merge(dfL13, datya, on='AGE BANDS', how='right')
+                                    dfL13['TOTAL'] = dfL13['TOTAL'].fillna(0)
+                                    dfL13['R'] = dfL13['AGE BANDS'].map(amapper)
+                                    dfL13 = dfL13.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                    # st.write(dfL13)
+                            else:
+                                dfL13 = datya.copy()
+                                dfL13['TOTAL'] = 0
+
+                        df['DSD'] =  df['DSD'].astype(str)
+                        dmap = {
+                             'Community Drug Distribution Point': 'CDDP',
+                             'Community Client Led ART Delivery': 'GCLAD',
+                             'Facility Based Groups':'FBG',
+                             'Fast Track Drug Refill':'FTDR',
+                             'Facility Based Individual Management': 'FBIM'
+
+                        }
+                        df['DSD'] = df['DSD'].astype(str)
+                        df['DSD'] = df['DSD'].fillna('Fast Track Drug Refill')
+                        df['DSD'] = df['DSD'].str.replace('NaT','Fast Track Drug Refill')
+                        df['DSD'] = df['DSD'].str.replace('nan','Fast Track Drug Refill')
+                        df['DSDM'] = df['DSD'].map(dmap)
+                        df['DSDM'] = df['DSDM'].astype(str)
                         
+
+                        cddp = df[df['DSDM']== 'CDDP'].copy()
+                        if cddp.shape[0]>0:
+                                #st.write(cddp[['ART', 'AG','VD', 'ARVS','DSD']])
+                                cddp = cddp.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                cddp = pd.merge(cddp, datya, on='AGE BANDS', how='right')
+                                cddp['TOTAL'] = cddp['TOTAL'].fillna(0)
+                                cddp['R'] = cddp['AGE BANDS'].map(amapper)
+                                cddp = cddp.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                # st.write(cddp)
+                        else:
+                                cddp = datya.copy()
+                                cddp['TOTAL'] = 0
+
+                        cclad = df[df['DSDM']== 'CCLAD'].copy()
+                        if cclad.shape[0]>0:
+                                #st.write(cclad['ART', 'AG','VD', 'ARVS','DSD']])
+                                cclad = cclad.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                cclad = pd.merge(cclad, datya, on='AGE BANDS', how='right')
+                                cclad['TOTAL'] = cclad['TOTAL'].fillna(0)
+                                cclad['R'] = cclad['AGE BANDS'].map(amapper)
+                                cclad = cclad.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                # st.write(cclad)
+                        else:
+                                cclad = datya.copy()
+                                cclad['TOTAL'] = 0
+                        crddp = df[df['DSDM']== 'CRDDP'].copy()
+                        if crddp.shape[0]>0:
+                                #st.write(crddp[['ART', 'AG','VD', 'ARVS','DSD']])
+                                crddp = crddp.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                crddp = pd.merge(crddp, datya, on='AGE BANDS', how='right')
+                                crddp['TOTAL'] = crddp['TOTAL'].fillna(0)
+                                crddp['R'] = crddp['AGE BANDS'].map(amapper)
+                                crddp = crddp.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                # st.write(crddp)
+                        else:
+                                crddp = datya.copy()
+                                crddp['TOTAL'] = 'IF THIS FACILITY HAS A PHARMAVY, CJECK ART ACCESS, AND SUBTRACT THEM FROM CDDP DATA'
+                        
+                        fbim = df[df['DSDM']== 'FBIM'].copy()
+                        if fbim.shape[0]>0:
+                                #st.write(fbim[['ART', 'AG','VD', 'ARVS','DSD']])
+                                fbim = fbim.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                fbim = pd.merge(fbim, datya, on='AGE BANDS', how='right')
+                                fbim['TOTAL'] = fbim['TOTAL'].fillna(0)
+                                fbim['R'] = fbim['AGE BANDS'].map(amapper)
+                                fbim = fbim.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                # st.write(fbim)
+                        else:
+                                fbim = datya.copy()
+                                fbim['TOTAL'] = 0 
+
+                        fbg = df[df['DSDM']== 'FBG'].copy()
+                        if fbg.shape[0]>0:
+                                #st.write(fbg[['ART', 'AG','VD', 'ARVS','DSD']])
+                                fbg = fbg.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                fbg = pd.merge(fbg, datya, on='AGE BANDS', how='right')
+                                fbg['TOTAL'] = fbg['TOTAL'].fillna(0)
+                                fbg['R'] = fbg['AGE BANDS'].map(amapper)
+                                fbg = fbg.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                # st.write(fbg)
+                        else:
+                                fbg = datya.copy()
+                                fbg['TOTAL'] = 0   
+                        
+                        ftdr = df[df['DSDM']== 'FTDR'].copy()
+                        if ftdr.shape[0]>0:
+                                #st.write(ftdr[['ART', 'AG','VD', 'ARVS','DSD']])
+                                ftdr = ftdr.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                ftdr = pd.merge(ftdr, datya, on='AGE BANDS', how='right')
+                                ftdr['TOTAL'] = ftdr['TOTAL'].fillna(0)
+                                ftdr['R'] = ftdr['AGE BANDS'].map(amapper)
+                                ftdr = ftdr.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                # st.write(ftdr)
+                        else:
+                                ftdr = datya.copy()
+                                ftdr['TOTAL'] = 0
+                             
 
 
                             
 
-
-                              
-                             
-
-
-                             
-    
