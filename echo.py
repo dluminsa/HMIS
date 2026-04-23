@@ -1,18 +1,11 @@
 import os
 import io
-import time
-import traceback
-import datetime as dt
-from datetime import datetime
-from pathlib import Path
 from decimal import Decimal, ROUND_HALF_UP
 import pandas as pd
 import numpy as np
+import time
 import streamlit as st
-import gspread
-from openpyxl import load_workbook
-from google.oauth2.service_account import Credentials
-from streamlit_gsheets import GSheetsConnection
+
 
 
 def extract():
@@ -963,7 +956,6 @@ def extract():
                         else:
                                 ftdr = datya.copy()
                                 ftdr['TOTAL'] = 0
-                        st.write('LINE 7')
                              
     
     # if file is not None:# and st.session_state.dfw:
@@ -1063,18 +1055,10 @@ def extract():
                                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                                 key = 'LINELISTS'
                                 )    
-                        else:
-                               
-                                    
-                                        pass
-    
-            
-                              
-          
-       
-     
+                        else:                                
+                                 pass  
 
-            # st.success('**CREATED BY Dr. LUMINSA DESIRE**')
+                        st.success('**CREATED BY Dr. LUMINSA DESIRE**')
                         
 pages = {
     "READER:": [
