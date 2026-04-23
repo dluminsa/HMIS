@@ -18,7 +18,7 @@ from streamlit_gsheets import GSheetsConnection
 def extract():
     cola,colb,colc = st.columns([1,3,1])
     colb.subheader('PIVOT TABLES FOR ECHO DATA')
-    st.image(r'C:\Users\dluminsa\Desktop\PROGRAM\HMIS\rename.png')
+    st.image(r'rename.png')
     #VARIABLES
     lyear = 2026
     lmonth = 3 #LAST MONTH OF THE SAID QTR
@@ -31,7 +31,7 @@ def extract():
 
     facility = st.text_input('Enter Facility Name')
     if not facility:
-        st.warning('**Please enter the facility name to proceed**')
+        st.warning('**Please first enter the name of the facility you want to analyse**')
         st.stop()
     else:
          pass   
@@ -373,11 +373,21 @@ def extract():
                         at = testrw.shape[0] 
 
                         if at > 0:
-                            st.info('**ERROR!!!!**')
-                            st.warning(f'**{at} CALHIV listed below have no weight in the uploaded extract**')
+                            st.info(f'**{at} CALHIV listed below have no weight in the uploaded extract**')
                             st.write('**first input their weight to avoid errors**')
                             testrw =testrw[['ART','AG', 'RD', 'WT']].copy()
-                            st.write(testrw)
+                            colh, colj = st.columns([2,1])
+                            csvd = testrw.to_csv(index=False)
+                            colh.write(testrw)
+                            with colj:
+                                st.download_button(
+                                        label="Download them from here",
+                                        data= csvd,
+                                        file_name=f"{facility}_missing_wight.csv",
+                                        mime="text/csv",
+                                        key="download_missing_weight"
+                                        )
+                            
                             st.stop()
                         else:
                             #  st.write('**All CALHIV have weight, proceeding with the analysis**')
@@ -1053,9 +1063,16 @@ def extract():
                                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                                 key = 'LINELISTS'
                                 )    
-                        else:     
-                            pass
+                        else:
+                               
+                                    
+                                        pass
     
+            
+                              
+          
+       
+     
 
             # st.success('**CREATED BY Dr. LUMINSA DESIRE**')
                         
