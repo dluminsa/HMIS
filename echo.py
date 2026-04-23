@@ -14,22 +14,21 @@ from openpyxl import load_workbook
 from google.oauth2.service_account import Credentials
 from streamlit_gsheets import GSheetsConnection
 
-a = 2
-# def extract():
-#VARIABLES
-lyear = 2026
-lmonth = 3 #LAST MONTH OF THE SAID QTR
-qmonths = [1,2,3] #MONTHS IN THE QUARTER
 
-vyear = 2025 #VL DATE 6 MONTHS AGO
-vmonth =9  #VL MONTH 6 MONTHS AGO
-
-vmonths = [10,11,12]
-
-
-if a == 2:
+def extract():
     cola,colb,colc = st.columns([1,3,1])
     colb.subheader('PIVOT TABLES FOR ECHO DATA')
+    st.image(r'C:\Users\dluminsa\Desktop\PROGRAM\HMIS\rename.png')
+    #VARIABLES
+    lyear = 2026
+    lmonth = 3 #LAST MONTH OF THE SAID QTR
+    qmonths = [1,2,3] #MONTHS IN THE QUARTER
+
+    vyear = 2025 #VL DATE 6 MONTHS AGO
+    vmonth =9  #VL MONTH 6 MONTHS AGO
+
+    vmonths = [10,11,12]
+
     facility = st.text_input('Enter Facility Name')
     if not facility:
         st.warning('**Please enter the facility name to proceed**')
@@ -38,7 +37,7 @@ if a == 2:
          pass   
     
 
-    file = st.file_uploader("Upload your EMR extract here", type=['csv']) 
+    file = st.file_uploader(f"Upload a CSV containing the {facility}'s TX CURR", type=['csv']) 
     if file is not None:        
         st.session_state.df = None
         time.sleep(1)
@@ -389,8 +388,10 @@ if a == 2:
                              st.info("**THIS EXTRACT DOESN'T AHVE ANY CALHIV BTN 0 to 19 YEAR, CHECK MANUALLY**")
                              st.stop()
                         else:
-                            dfb11 = pd.DataFrame({ 'Total number of CALHIV currently recieving care at this HF?': [b11]})
-                            #  st.write(dfb11)
+                            dfb11 = pd.DataFrame({ " ":['TOTAL'],
+                                                        'CALHIV': [b11],
+                                                        '': 'Total number of CALHIV currently recieving care at this HF?'})
+                            #st.write(dfb11)
                             df['WT'] = pd.to_numeric(df['WT'], errors='coerce')
                             b2 = df[df['WT']>2.9].copy()
                             dfb2 = df.groupby('WEIGHT BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
@@ -398,14 +399,14 @@ if a == 2:
                             dfb2['TOTAL'] = dfb2['TOTAL'].fillna(0)
                             dfb2['R'] = dfb2['WEIGHT BANDS'].map(wmapper)
                             dfb2 = dfb2.sort_values('R').drop(columns='R')
-                            #  st.write(dfb2)
+                            #st.write(dfb2)
                              
                             dfb3 = df.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
                             dfb3 = pd.merge(dfb3, datya, on='AGE BANDS', how='right')
                             dfb3['TOTAL'] = dfb3['TOTAL'].fillna(0)
                             dfb3['R'] = dfb3['AGE BANDS'].map(amapper)
                             dfb3 = dfb3.sort_values('R').drop(columns='R')
-                            #  st.write(dfb3)
+                            #st.write(dfb3)
 
 
                             df[['TDF', 'DTG']] = df[['TDF', 'DTG']].astype(str)
@@ -415,7 +416,7 @@ if a == 2:
                             a2 = b11 - a1
                             if a2 > 0:
                                 cola, colb = st.columns(2)
-                                cola.markdown(f'**You have {a2} CALHIV are not on ABC-DTG regimen**')
+                                cola.markdown(f'**You have {a2} CALHIV that are not on ABC-DTG regimen**')
                                 with colb.expander('**Click here to see them**'):
                                     dfn = dfn[['ART', 'AG', 'WT', 'ARVS']].copy()
                                     dfn = dfn.reset_index(drop=True)
@@ -425,7 +426,7 @@ if a == 2:
                             #children on ABC-DTG]
                             #st.write(dfc[['ART','AG', 'WT', 'ARVS']])
                             dfc['WT'] = pd.to_numeric(dfc['WT'], errors='coerce')
-                            dfc = dfc[((dfc['WT']>2.9) | (dfc['WT']<6))].copy()
+                            dfc = dfc[((dfc['WT']>2.9) & (dfc['WT']<6))].copy()
                             a3 = dfc.shape[0]
                             if a3 > 0:
                                  #st.write(dfc[['ART', 'AG', 'WT', 'ARVS']].reset_index(drop=True))
@@ -434,7 +435,7 @@ if a == 2:
                                 dfc1['TOTAL'] = dfc1['TOTAL'].fillna(0)
                                 dfc1['R'] = dfc1['WEIGHT BANDS'].map(wmapper)
                                 dfc1 = dfc1.sort_values('R').drop(columns='R')
-                                #st.write(dfc1)
+                                # st.write(dfc1)
                                 dfc2 = dfc.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
                                 dfc2 = pd.merge(dfc2, datya, on='AGE BANDS', how='right')
                                 dfc2['TOTAL'] = dfc2['TOTAL'].fillna(0)
@@ -444,10 +445,10 @@ if a == 2:
                             else:
                                  dfc1 = datyw.copy()
                                  dfc1['TOTAL'] = 0
-                                 #st.write(dfc1)  
+                                #  st.write(dfc1)  
                                  dfc2 = datya.copy()
                                  dfc2['TOTAL'] = 0
-                                 #st.write(dfc2) 
+                                #  st.write(dfc2) 
                             
                             #pALD ELIGIBILITY BY AGE BANDS FROM THE WHOLE CURR C4
                             df['AG'] = pd.to_numeric(df['AG'], errors='coerce')
@@ -472,7 +473,7 @@ if a == 2:
                                     dfc5 = dfc5.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
                                     dfc5['R'] = dfc5['AGE BANDS'].map(c4map)
                                     dfc5 = dfc5.sort_values('R').drop(columns='R').reset_index(drop=True)
-                                    #st.write(dfc5)
+                                    # st.write(dfc5)
                                 else:
                                      dfc5 = datyw.copy()
                                      dfc5['TOTAL'] = 0
@@ -495,7 +496,7 @@ if a == 2:
                                 c6map = {'3-5.9 KG':1, '6-9.9 KG':2, '10-13.9 KG':3, '14-19.9 KG':4, '20-24.9 KG':5}
                                 dfc6['R'] = dfc6['WEIGHT BANDS'].map(c6map)
                                 dfc6 = dfc6.sort_values('R').drop(columns='R').reset_index(drop=True)
-                                #st.write(dfc6)
+                                # st.write(dfc6)
 
                                 #OF THESE, WHO IS ON PALD? 
                                 dfcpc[['TDF', 'DTG']] = dfcpc[['TDF', 'DTG']].astype(str)
@@ -507,7 +508,9 @@ if a == 2:
                                         st.info('**You have CALHIV who are eligible for PALD by weight but are not on ABC-DTG regimen**')
                                         st.write(dfc8[['ART', 'AG', 'WT', 'ARVS']].reset_index(drop=True))
                                         confirm = st.radio('Is this correct?', ('Yes', 'No'), horizontal=True, index=None)
-                                        if not confirm or confirm == 'No':
+                                        if not confirm:
+                                             st.stop()
+                                        elif confirm == 'No':
                                             st.warning('**Correct their regimen in the extract before uploading again**')
                                             st.stop()
                                         else:
@@ -533,28 +536,31 @@ if a == 2:
                                  dfc7['TOTAL'] = 0
                                  dfc7 = dfc7.head(5)
                                  #st.write(dfc7)
+
                             #TOTAL CONSUMPTION OF DRUGS
                             #CAME LAST MONTH
                             df[['Lmonth', 'Lyear']] = df[['Lmonth', 'Lyear']].apply(pd.to_numeric, errors='coerce')
                             dff = df[((df['Lyear']==lyear)  & (df['Lmonth']==lmonth))].copy()
                             aptc = dff.shape[0]
+                            #st.write(aptc)
                             #st.write(dff[['ART', 'LD', 'WT', 'ARVS', 'TDF', '3TC', 'DTG']].reset_index(drop=True))
                             
                             if dff.shape[0]>0: #if there are clients that attended
                                 p4 = 0
+                                #st.write(dff)
                                 #OF THOSE WHO ATTENDED, HOW MANY ARE ON ABC DTG
                                 dff[['TDF', 'DTG']] = dff[['TDF', 'DTG']].astype(str)
                                 dffp = dff[((dff['TDF']=='ABC') & (dff['DTG']=='DTG'))].copy() #ON ABC/DTG
                                 dfaz = dff[((dff['TDF']=='AZT') & (dff['3TC']=='3TC'))].copy()   #ON AZT/3TC 
-                                dfdar = dff[(dff['DTG']=='DRV/r')].copy()   #ON TDF/3TC
+                                dfdar = dff[(dff['DTG']=='DRV/r')].copy()   #ON DRV/r
 
                                 #OF THOSE ON ABC DTG, HOW MANY ARE FOR PALD
                                 dffp['WT'] = pd.to_numeric(dffp['WT'], errors='coerce')
-                                dfsp = dffp[(dffp['WT']>5.9) & (dffp['WT']<25)].copy()
-                                dfnp = dffp[(dffp['WT']<6)].copy()
+                                dfsp = dffp[(dffp['WT']>5.9) & (dffp['WT']<25)].copy() #PALD
+                                dfnp = dffp[(dffp['WT']<6)].copy() #ABC/3TC 120/60
 
                                 if dfsp.shape[0]>0: #if there are pld clients that attended
-                                    #st.write(dfsp[['ART', 'AG','LD', 'ARVS','ARVD']])
+                                    # st.write(dfsp[['ART', 'AG','LD', 'ARVS','ARVD']])
                                        
                                     dfsp['ARVD'] = pd.to_numeric(dfsp['ARVD'], errors='coerce')
 
@@ -563,6 +569,7 @@ if a == 2:
                                         p1 = dfp1['ARVD'].sum()
                                         p1 = p1/90
                                         p1 = int(Decimal(p1).quantize(0, rounding=ROUND_HALF_UP))
+                                        #st.write(p1)
                                     else:
                                         p1 = 0
 
@@ -587,7 +594,7 @@ if a == 2:
                                     p3 = 0
                                 #THOSE ON AZT/3TC
                                 if dfaz.shape[0]>0:
-                                    st.write(dfaz[['ART', 'AG','LD', 'ARVS','ARVD']])
+                                    #st.write(dfaz[['ART', 'AG','LD', 'ARVS','ARVD']])
                                     dfaz['ARVD'] = pd.to_numeric(dfaz['ARVD'], errors='coerce')
                                     p5 = dfaz['ARVD'].sum()
                                     p5 = p5/60
@@ -611,45 +618,76 @@ if a == 2:
                                  p4 = 0
                                  p5 = 0
                                  p6 = 0
+                            df3 = pd.DataFrame({
+                                'DRUG': ['ABC/3TC/DTG 60/30/5 90 PACK','ABC/3TC/DTG 60/30/5 180 PACK','ABC/3TC 120/60','DTG 10 MG','AZT/3TC 60/30','DARUNAVIR'],
+                                'STOCK USED': [p1, p2, p3, p4, p5, p6],
+                                'NOTE': ['','','','CONFIRM WITH FACILITY FOR THIS','',"CHECK IF YOU DON'T HAVE 2nd AND 3rd LINERS"]
+                                })
+                                
+                            #st.write(df3)
 
                             ###TX NEWS
                             df[['Ayear', 'Amonth']] = df[['Ayear', 'Amonth']].apply(pd.to_numeric, errors='coerce')
                             dftn = df[((df['Ayear']==lyear)  & (df['Amonth'].isin(qmonths)))].copy()
+                        
 
                             if dftn.shape[0]>0: #IF THEY ARE THERE
                                 news = dftn[['ART', 'AS', 'RD', 'BCD4']].copy()
-                                st.write(dftn[['ART', 'AG','RD', 'ARVS','BCD4']])
+                                #st.write(dftn[['ART', 'AG','RD', 'ARVS','BCD4']])
                                 dfg1 = dftn.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
                                 dfg1 = pd.merge(dfg1, datya, on='AGE BANDS', how='right')
                                 dfg1['TOTAL'] = dfg1['TOTAL'].fillna(0)
                                 dfg1['R'] = dfg1['AGE BANDS'].map(amapper)
                                 dfg1 = dfg1.sort_values('R').drop(columns='R').reset_index(drop=True)
-                                #st.write(dfg1)
+                                st.write(dfg1)
                                 dftn['BCD4'] = pd.to_numeric(dftn['BCD4'], errors='coerce') 
 
                                 #THOSE WITH LOW CD4 COUNT
                                 dfcd = dftn[dftn['BCD4']<200].copy()
                                 if dfcd.shape[0]>0:
                                     lows = dfcd[['ART', 'AS', 'RD', 'BCD4']].copy()
+                                    lows['NEEDED'] = 'Check if they had TB LAM and all the AHD Cascade as required in section G.1'
                                     #st.write(dfcd[['ART', 'AG','AS', 'ARVS','BCD4']])
-                                    dfg2 = dfcd.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
-                                    dfg2 = pd.merge(dfg2, datya, on='AGE BANDS', how='right')
-                                    dfg2['TOTAL'] = dfg2['TOTAL'].fillna(0)
-                                    dfg2['R'] = dfg2['AGE BANDS'].map(amapper)
-                                    dfg2 = dfg2.sort_values('R').drop(columns='R').reset_index(drop=True)
-                                    #st.write(dfg2)
+                                    dfg12 = dfcd.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                    dfg12 = pd.merge(dfg12, datya, on='AGE BANDS', how='right')
+                                    dfg12['TOTAL'] = dfg12['TOTAL'].fillna(0)
+                                    dfg12['R'] = dfg12['AGE BANDS'].map(amapper)
+                                    dfg12 = dfg12.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                    #st.write(dfg12)
                                 else:
-                                     dfg2 = datya.copy()
-                                     dfg2['TOTAL'] = 0
-                                     #st.write(dfg2)
+                                     dfg12 = datya.copy()
+                                     dfg12['TOTAL'] = 0
+                                    #  st.write(dfg2)
+                                     lows = pd.DataFrame()
+                                    #  st.write(lows)
 
                                 
                             else:
                                  dfg1 = datya.copy()
                                  dfg1['TOTAL'] = 0
-                                 #st.write(dfg1)
-                                 dfg2 = dfg1.copy()
+                                #  st.write(dfg1)
+                                 dfg12 = dfg1.copy()
+                            #NONE SUPPRESSORS
+                            df[['Vyear', 'Vmonth']] = df[['Vyear', 'Vmonth']].apply(pd.to_numeric, errors='coerce')
+                            has = df[((df['Vyear']>vyear)| ((df['Vyear']==vyear) & (df['Vmonth']>vmonth)))].copy()
+                            has['VR'] = pd.to_numeric(has['VR'], errors='coerce')
+                            dfns = has[has['VR']>999].copy()
+                            if dfns.shape[0]>0:
+                                nones = dfns[['ART', 'RD', 'VD', 'VR']].copy()
+                                #  st.write(nones)
+                                nones['NEEDED'] = 'Check if they had TB LAM and all the AHD Cascade as required in section G.2'
+                                dfg2 = dfns.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                dfg2 = pd.merge(dfg2, datya, on='AGE BANDS', how='right')
+                                dfg2['TOTAL'] = dfg2['TOTAL'].fillna(0)
+                                dfg2['R'] = dfg2['AGE BANDS'].map(amapper)
+                                dfg2 = dfg2.sort_values('R').drop(columns='R').reset_index(drop=True)
+                                #st.write(dfg2)
+                            else:
+                                 dfg2 = datya.copy()
+                                 dfg2['TOTAL'] = 0
+                                 nones = pd.DataFrame()
 
+                            
                             #ON APPOINTMENT
                             df[['Rmonth', 'Ryear']] = df[['Rmonth', 'Ryear']].apply(pd.to_numeric, errors='coerce')
                             dfm = df[((df['Ryear']==lyear)& (df['Rmonth']==lmonth))].copy()
@@ -657,17 +695,21 @@ if a == 2:
 
                             apt = aptm + aptc
                             if apt>0:
-                                 dfh1 = pd.DataFrame({'CALHIV was this HF expecting': [apt]})
-                                 dfh2 = pd.DataFrame({'how many actually returned': [aptc]})
+                                dfh1 = pd.DataFrame( {'RETENTION':['CALHIV this HF expecting (H.1)','how many actually returned (H.1.1)'],
+                                                                   'TOTAL': [apt, aptc]
+                                                                   })
+                                # st.write(dfh1)
                             else:
-                                dfh1 = pd.DataFrame({'CALHIV was this HF expecting': [0]})
-                                dfh2 = pd.DataFrame({'how many actually returned': [0]})
+                                dfh1 = pd.DataFrame( {'RETENTION':['CALHIV this HF expecting (H.1)','how many actually returned (H.1.1)'],
+                                                                   'TOTAL': [0,0]
+                                                                   })
 
                             #VL DATA
                             df[['Vyear', 'Vmonth']] = df[['Vyear', 'Vmonth']].apply(pd.to_numeric, errors='coerce')
                             dfvl = df[((df['Vyear']>vyear)|((df['Vyear']==vyear) & (df['Vmonth']>vmonth)))].copy()
                             dfnvl = df[((df['Vyear']<vyear)|((df['Vyear']==vyear) & (df['Vmonth']<=vmonth)))].copy()
-                          
+                            # st.write(dfvl.shape[0])
+                            # st.write(dfnvl.shape[0])
 
                             if dfvl.shape[0]>0: #THOSE WITH VLS
                                 #st.write(dfvl[['ART', 'AG','VD', 'ARVS','VR']])
@@ -676,7 +718,7 @@ if a == 2:
                                 dfi['TOTAL'] = dfi['TOTAL'].fillna(0)
                                 dfi['R'] = dfi['AGE BANDS'].map(amapper)
                                 dfi = dfi.sort_values('R').drop(columns='R').reset_index(drop=True)
-                                #st.write(dfi)
+                                # st.write(dfi)
 
                                 dfvl['VR'] = pd.to_numeric(dfvl['VR'], errors='coerce').fillna(0)
                                 dfvls = dfvl[dfvl['VR']<1000].copy() #SUPPRESSED
@@ -689,7 +731,7 @@ if a == 2:
                                     dfi3['TOTAL'] = dfi3['TOTAL'].fillna(0)
                                     dfi3['R'] = dfi3['AGE BANDS'].map(amapper)
                                     dfi3 = dfi3.sort_values('R').drop(columns='R').reset_index(drop=True)
-                                    #st.write(dfi3)
+                                    # st.write(dfi3)
                                 else:
                                     dfi3 = datya.copy()
                                     dfi3['TOTAL'] = 0
@@ -702,7 +744,7 @@ if a == 2:
                                     dfi4['TOTAL'] = dfi4['TOTAL'].fillna(0)
                                     dfi4['R'] = dfi4['AGE BANDS'].map(amapper)
                                     dfi4 = dfi4.sort_values('R').drop(columns='R').reset_index(drop=True)
-                                    #st.write(dfj)
+                                    # st.write(dfi4)
                                 else:
                                     dfi4 = datya.copy()
                                     dfi4['TOTAL'] = 0
@@ -719,7 +761,7 @@ if a == 2:
                                     dfi2['TOTAL'] = dfi2['TOTAL'].fillna(0)
                                     dfi2['R'] = dfi2['AGE BANDS'].map(amapper)
                                     dfi2 = dfi2.sort_values('R').drop(columns='R').reset_index(drop=True)
-                                    #st.write(dfi2)
+                                    # st.write(dfi2)
                             else:
                                 dfi2 = datya.copy()
                                 dfi2['TOTAL'] = 0 
@@ -733,13 +775,14 @@ if a == 2:
                                 dfvk = dfvj[((dfvj['VR']>200) & (dfvj['VR']<1000))].copy() 
                                 dfvk['VR'] = pd.to_numeric(dfvk['VR'], errors = 'coerce')
                                 dfvk = dfvk[dfvk['VR']!=400].copy()
-
                                 #HLVS
                                 dfvj = dfvj[dfvj['VR']>999].copy()
+                                
 
                                 if dfvj.shape[0]>0: #THE HLVS
                                      #st.write(dfvj[['ART', 'AG','VD', 'ARVS','VR']])
                                     hlvs = dfvj[['ART', 'RD', 'VD', 'VR']].copy()
+                                    hlvs['NEEDED'] = 'Check if they completed IACs as needed in section J'
                                     dfj1 = dfvj.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
                                     dfj2 = pd.merge(dfj1, datya, on='AGE BANDS', how='right')
                                     dfj1['TOTAL'] = dfj1['TOTAL'].fillna(0)
@@ -749,10 +792,12 @@ if a == 2:
                                 else:
                                     dfj1 = datya.copy()
                                     dfj1['TOTAL'] = 0
+                                    hlvs = pd.DataFrame()
 
                                 if dfvk.shape[0]>0: #THE LLVS
                                      #st.write(dfvk[['ART', 'AG','VD', 'ARVS','VR']])
                                     llvs = dfvk[['ART', 'RD', 'VD', 'VR']].copy()
+                                    llvs['NEEDED'] = 'Check if they completed IACs as needed in section K'
                                     dfk1 = dfvk.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
                                     dfk2 = pd.merge(dfk1, datya, on='AGE BANDS', how='right')
                                     dfk1['TOTAL'] = dfk1['TOTAL'].fillna(0)
@@ -764,13 +809,19 @@ if a == 2:
                                     dfk1 = datya.copy()
                                     dfk1['TOTAL'] = 0
                                     # st.write(dfk1)
+                                    llvs = pd.DataFrame()
                             else:
                                  dfj1 = datya.copy()
                                  dfj1['TOTAL'] = 0
                                  dfk1 = dfj1.copy()
                                 #  st.writ(dfk1)
-                            dfL = pd.DataFrame({ 'Total number of CALHIV currently recieving care at this HF?': [b11]})
-                           
+                            dfL = pd.DataFrame({ " ":['TOTAL'],
+                                                        'CALHIV': [b11],
+                                                        '': 'Total CALHIV in care'})
+                            dfL11 = datya.copy()
+                            dfL11['TOTAL'] = 0
+                            dfL11['NOTE'] = 'Only put zero if this facility has no teen clubs'
+                            #st.write(dfL12)
                            #MMD SECTION
                             df['ARVD'] = pd.to_numeric(df['ARVD'], errors = 'coerce')
 
@@ -792,7 +843,7 @@ if a == 2:
                                 dfL12['TOTAL'] = 0
                                  
                             #6 MONTHS
-                            dfL13 = dfL1[dfL1['ARVD'] > 180].copy()
+                            dfL13 = dfL1[dfL1['ARVD'] >= 180].copy()
                             if dfL13.shape[0] > 0:
                                     #st.write(dfL13[['ART', 'AG','VD', 'ARVS','VR']])
                                     dfL13 = dfL13.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
@@ -804,7 +855,7 @@ if a == 2:
                             else:
                                 dfL13 = datya.copy()
                                 dfL13['TOTAL'] = 0
-
+                        
                         df['DSD'] =  df['DSD'].astype(str)
                         dmap = {
                              'Community Drug Distribution Point': 'CDDP',
@@ -830,7 +881,7 @@ if a == 2:
                                 cddp['TOTAL'] = cddp['TOTAL'].fillna(0)
                                 cddp['R'] = cddp['AGE BANDS'].map(amapper)
                                 cddp = cddp.sort_values('R').drop(columns='R').reset_index(drop=True)
-                                # st.write(cddp)
+                                #st.write(cddp)
                         else:
                                 cddp = datya.copy()
                                 cddp['TOTAL'] = 0
@@ -847,6 +898,7 @@ if a == 2:
                         else:
                                 cclad = datya.copy()
                                 cclad['TOTAL'] = 0
+                                #st.write(cclad)
                         crddp = df[df['DSDM']== 'CRDDP'].copy()
                         if crddp.shape[0]>0:
                                 #st.write(crddp[['ART', 'AG','VD', 'ARVS','DSD']])
@@ -858,8 +910,10 @@ if a == 2:
                                 # st.write(crddp)
                         else:
                                 crddp = datya.copy()
-                                crddp['TOTAL'] = 'IF THIS FACILITY HAS A PHARMAVY, CJECK ART ACCESS, AND SUBTRACT THEM FROM CDDP DATA'
-                        
+                                crddp['TOTAL'] = 0
+                                crddp['NOTE'] = 'IF THIS FACILITY HAS A PHARMAVY, CHECK ART ACCESS, AND SUBTRACT THEM FROM CDDP DATA'
+                                #st.write(crddp)
+
                         fbim = df[df['DSDM']== 'FBIM'].copy()
                         if fbim.shape[0]>0:
                                 #st.write(fbim[['ART', 'AG','VD', 'ARVS','DSD']])
@@ -872,6 +926,7 @@ if a == 2:
                         else:
                                 fbim = datya.copy()
                                 fbim['TOTAL'] = 0 
+                                #st.write(fbim)
 
                         fbg = df[df['DSDM']== 'FBG'].copy()
                         if fbg.shape[0]>0:
@@ -881,7 +936,7 @@ if a == 2:
                                 fbg['TOTAL'] = fbg['TOTAL'].fillna(0)
                                 fbg['R'] = fbg['AGE BANDS'].map(amapper)
                                 fbg = fbg.sort_values('R').drop(columns='R').reset_index(drop=True)
-                                # st.write(fbg)
+                                #st.write(fbg)
                         else:
                                 fbg = datya.copy()
                                 fbg['TOTAL'] = 0   
@@ -898,8 +953,118 @@ if a == 2:
                         else:
                                 ftdr = datya.copy()
                                 ftdr['TOTAL'] = 0
+                        st.write('LINE 7')
                              
+    
+    # if file is not None:# and st.session_state.dfw:
+        
+    #         # Create an in-memory BytesIO buffer
+                        output = io.BytesIO()
+ 
+                           
+                        with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+                                dfb11.to_excel(writer, sheet_name="B.1.1", index=False) 
+                                dfb2.to_excel(writer, sheet_name="B.2", index=False)
+                                dfb3.to_excel(writer, sheet_name="B.3", index=False)
+                                dfc1.to_excel(writer, sheet_name="C.1", index=False)
+                                dfc2.to_excel(writer, sheet_name="C.2", index=False)
+                                dfc4.to_excel(writer, sheet_name="C.4", index=False)
+                                dfc5.to_excel(writer, sheet_name="C.5", index=False)
+                                dfc6.to_excel(writer, sheet_name="C.6", index=False)
+                                df3.to_excel(writer, sheet_name="F.3.2", index=False)
+                                dfg1.to_excel(writer, sheet_name="G.1", index=False)
+                                dfg12.to_excel(writer, sheet_name="G.1.2", index=False)
+                                dfg2.to_excel(writer, sheet_name="G.2.1", index=False)
+                                dfh1.to_excel(writer, sheet_name="H", index=False)
+                                dfi.to_excel(writer, sheet_name="I.1", index=False)
+                                dfi2.to_excel(writer, sheet_name="I.2", index=False)
+                                dfi3.to_excel(writer, sheet_name="I.3", index=False)
+                                dfi4.to_excel(writer, sheet_name="I.4", index=False)
+                                dfj1.to_excel(writer, sheet_name="J.1.1", index=False)
+                                dfk1.to_excel(writer, sheet_name="K.1.1", index=False)
+                                dfL.to_excel(writer, sheet_name="L", index=False)
+                                dfL11.to_excel(writer, sheet_name="L.1.1", index=False)
+                                dfL12.to_excel(writer, sheet_name="L.1.2", index=False)
+                                dfL13.to_excel(writer, sheet_name="L.1.3", index=False)
+                                cddp.to_excel(writer, sheet_name="L.1.4(CDDP)", index=False)
+                                cclad.to_excel(writer, sheet_name="L.1.5(CCLAD)", index=False)
+                                crddp.to_excel(writer, sheet_name="L.1.6(CRPDDP)", index=False)
+                                fbim.to_excel(writer, sheet_name="L.1.7(FBIM)", index=False)
+                                fbg.to_excel(writer, sheet_name="L.1.8(FBG)", index=False)
+                                ftdr.to_excel(writer, sheet_name="L.1.9(FTDR)", index=False)                            
 
+                                output.seek(0) 
 
-                            
+    
+                        col1, col2 = st.columns (2)
+                                        
+                        col1.download_button(
+                                            label="📥 DOWNLOAD ECHO DATA",
+                                            data=output,
+                                            file_name=f"{facility}_ECHO DATA.xlsx",
+                                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                            )
+            
+                
+                        # Create an in-memory BytesIO buffer
+                        
+                        if dftn.shape[0]>0:
+                            dftn['BCD4'] = pd.to_numeric(dftn['BCD4'], errors='coerce') 
 
+                            #THOSE WITH LOW CD4 COUNT
+                            dfcd = dftn[dftn['BCD4']<200].copy()
+                            if dfcd.shape[0]>0:
+                                    lows = dfcd[['ART', 'AS', 'RD', 'BCD4']].copy()
+                                    lows['NEEDED'] = 'Check if they had TB LAM and all the AHD Cascade as required in section G.1'
+                            else:
+                                lows = pd.DataFrame()
+                        else:
+                            lows = pd.DataFrame()
+
+                        output2 = io.BytesIO()  
+                        with pd.ExcelWriter(output2, engine="xlsxwriter") as writer:
+                                if lows.shape[0]>0:
+                                    lows.to_excel(writer, sheet_name=" <200 (SECTION G.1)", index=False) 
+                                else:
+                                    pass
+
+                                if nones.shape[0]>0:
+                                    nones.to_excel(writer, sheet_name="NS (SECTION G.2)", index=False) 
+                                else:
+                                    pass
+
+                                if hlvs.shape[0]>0:
+                                    hlvs.to_excel(writer, sheet_name="HLVS (SECTION J)", index=False) 
+                                else:
+                                    pass
+
+                                if llvs.shape[0]>0:
+                                    llvs.to_excel(writer, sheet_name="LLVS (SECTION K)", index=False) 
+                                else:
+                                    pass
+
+                        output2.seek(0) 
+            
+                        if nones.shape[0]>1 or hlvs.shape[0]>0 or llvs.shape[0]> 0 or lows.shape[0]>0:
+                            col2.download_button(
+                                label="📥 DOWNLOAD LINELISTS",
+                                data=output2,
+                                file_name=f"{facility}_LINELISTS.xlsx",
+                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                                key = 'LINELISTS'
+                                )    
+                        else:     
+                            pass
+    
+
+            # st.success('**CREATED BY Dr. LUMINSA DESIRE**')
+                        
+pages = {
+    "READER:": [
+        st.Page(extract, title="ECHO DATA CALL"),
+    ],
+   
+}
+
+pg = st.navigation(pages)
+pg.run()
