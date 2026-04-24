@@ -229,11 +229,11 @@ def extract():
                         C = a[~a['ARVS'].str.contains('/')].copy()
                         E = C[C['ARVS'].str.contains(' ')].copy()
                         D = C[~C['ARVS'].str.contains(' ')].copy()                                
-                        A[['TDF', '3TC', 'DTG','DR','DR']] = A['ARVS'].str.split('-', expand = True)
-                        B[['TDF', '3TC', 'DTG','DR','DR']] = B['ARVS'].str.split('/', expand = True)
+                        A[['TDF', '3TC', 'DTG','DR','DR2']] = A['ARVS'].str.split('-', expand = True)
+                        B[['TDF', '3TC', 'DTG','DR','DR2']] = B['ARVS'].str.split('/', expand = True)
                         try:
                             D['ARVS'] =  D['ARVS'].astype(str)
-                            D[['TDF', '3TC', 'DTG','DR','DR']] = D['ARVS'].str.split('-', expand = True)
+                            D[['TDF', '3TC', 'DTG','DR','DR2']] = D['ARVS'].str.split('-', expand = True)
                         except:
                             pass
                         try:  
