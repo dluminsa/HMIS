@@ -114,7 +114,7 @@ def extract():
                         df['AS'] = df['AS'].astype(str)
                                     
                         y = pd.DataFrame({'ART' :['2','3','4','5'], 'RD':['1-1-1',1,'1/1/1','3 8 2001'], 'AS':['1-1-1',1,'1/1/1','3 8 2001'],
-                                        'VD':['1-1-1',1,'1/1/1','3 8 2001'], 'LD':['1-1-1',1,'1/1/1','3 8 2001'],'ARVS':['1-1-1',1,'1/1/1','3 8 2001']})                        
+                                        'VD':['1-1-1',1,'1/1/1','3 8 2001'], 'LD':['1-1-1',1,'1/1/1','3 8 2001'],'ARVS':['1-1-1-1-1',1,'1/1/1/1/1','3 8 2001 4 6']})                        
                         
                         df['RD'] = df['RD'].astype(str)
                         df['AS'] = df['AS'].astype(str)
@@ -229,11 +229,11 @@ def extract():
                         C = a[~a['ARVS'].str.contains('/')].copy()
                         E = C[C['ARVS'].str.contains(' ')].copy()
                         D = C[~C['ARVS'].str.contains(' ')].copy()                                
-                        A[['TDF', '3TC', 'DTG']] = A['ARVS'].str.split('-', expand = True)
-                        B[['TDF', '3TC', 'DTG']] = B['ARVS'].str.split('/', expand = True)
+                        A[['TDF', '3TC', 'DTG','DR','DR']] = A['ARVS'].str.split('-', expand = True)
+                        B[['TDF', '3TC', 'DTG','DR','DR']] = B['ARVS'].str.split('/', expand = True)
                         try:
                             D['ARVS'] =  D['ARVS'].astype(str)
-                            D[['TDF', '3TC', 'DTG']] = D['ARVS'].str.split('-', expand = True)
+                            D[['TDF', '3TC', 'DTG','DR','DR']] = D['ARVS'].str.split('-', expand = True)
                         except:
                             pass
                         try:  
@@ -642,7 +642,7 @@ def extract():
                                 dfg1['TOTAL'] = dfg1['TOTAL'].fillna(0)
                                 dfg1['R'] = dfg1['AGE BANDS'].map(amapper)
                                 dfg1 = dfg1.sort_values('R').drop(columns='R').reset_index(drop=True)
-                                st.write(dfg1)
+                                #st.write(dfg1)
                                 dftn['BCD4'] = pd.to_numeric(dftn['BCD4'], errors='coerce') 
 
                                 #THOSE WITH LOW CD4 COUNT
@@ -781,7 +781,6 @@ def extract():
                                 #HLVS
                                 dfvj = dfvj[dfvj['VR']>999].copy()
                                 
-
                                 if dfvj.shape[0]>0: #THE HLVS
                                      #st.write(dfvj[['ART', 'AG','VD', 'ARVS','VR']])
                                     hlvs = dfvj[['ART', 'RD', 'VD', 'VR']].copy()
