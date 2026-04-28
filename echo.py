@@ -6,8 +6,6 @@ import numpy as np
 import time
 import streamlit as st
 
-
-
 def extract():
     cola,colb,colc = st.columns([1,3,1])
     colb.subheader('PIVOT TABLES FOR ECHO DATA')
