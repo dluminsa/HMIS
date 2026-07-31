@@ -770,6 +770,7 @@ def extract():
                             hlvs = pd.DataFrame()
                             dfj1 = datya.copy()
                             dfj1["TOTAL"] = 0
+                            llvs = pd.DataFrame()
 
                             if dfvl.shape[0]>0:
                                 dfvl[['Vyear', 'Vmonth']] = dfvl[['Vyear', 'Vmonth']].apply(pd.to_numeric, errors='coerce')
