@@ -413,8 +413,8 @@ def extract():
                             df[['TDF', 'DTG']] = df[['TDF', 'DTG']].astype(str)
                             dfc = df[((df['TDF']=='ABC') & (df['DTG']=='DTG'))].copy()
                             dfc2 = df[((df['TDF']=='TDF') & (df['DTG']=='DTG'))].copy()
+                            a3cn = dfc2[(dfc2['WT']>29.9)].copy()
                             
-                            a3cn = dfc2[(dfc['WT']>29.9)].copy()
                             dfn = df[~((df['TDF']=='ABC') & (df['DTG']=='DTG'))].copy()
                             a1 = dfc.shape[0]
                             a2 = b11 - a1
