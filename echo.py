@@ -856,7 +856,7 @@ def extract():
                                 dfL11 = datya.copy()
                                 dfL12['TOTAL'] = 0
                             #4 to 5 months
-                            dfL12 = dfL1[((dfL1['ARVD'] >90) & (dfL1['ARVD'] < 151)].copy()
+                            dfL12 = dfL1[((dfL1['ARVD'] >90) & (dfL1['ARVD'] < 151))].copy()
                             if dfL12.shape[0] > 0:
                                     #st.write(dfL12[['ART', 'AG','VD', 'ARVS','VR']])
                                     dfL12 = dfL12.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
