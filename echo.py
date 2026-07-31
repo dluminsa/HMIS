@@ -720,7 +720,10 @@ def extract():
                             df[['Vyear', 'Vmonth']] = df[['Vyear', 'Vmonth']].apply(pd.to_numeric, errors='coerce')
                             dfvl = df[((df['Vyear']>vyear)|((df['Vyear']==vyear) & (df['Vmonth']>vmonth)))].copy()
                             dfnvl = df[((df['Vyear']<vyear)|((df['Vyear']==vyear) & (df['Vmonth']<=vmonth)))].copy()
+                            st.write(vyear)
+                            st.write(vmonth)
                             st.write(df)
+                            
                             # st.write(dfnvl.shape[0])
 
                             if dfvl.shape[0]>0: #THOSE WITH VLS
