@@ -779,6 +779,7 @@ def extract():
                                 dfvk = dfvk[dfvk['VR']!=400].copy()
                                 #HLVS
                                 dfvj = dfvj[dfvj['VR']>999].copy()
+                                st.write(dfvj)
                                 
                                 if dfvj.shape[0]>0: #THE HLVS
                                      #st.write(dfvj[['ART', 'AG','VD', 'ARVS','VR']])
@@ -1034,7 +1035,7 @@ def extract():
                                     nones.to_excel(writer, sheet_name="NS (SECTION G.2)", index=False) 
                                 else:
                                     pass
-
+                            
                                 if hlvs.shape[0]>0:
                                     hlvs.to_excel(writer, sheet_name="HLVS (SECTION J)", index=False) 
                                 else:
