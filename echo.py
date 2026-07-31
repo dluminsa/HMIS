@@ -927,6 +927,10 @@ def extract():
                                 cclad = datya.copy()
                                 cclad['TOTAL'] = 0
                                 #st.write(cclad)
+
+                        yaps = datya.copy()
+                        yaps['NOTE'] = 'IF THIS FACILITY HAS A PHARMAVY, CHECK ART ACCESS, AND SUBTRACT THEM FROM CDDP DATA'
+
                         crddp = df[df['DSDM']== 'CRDDP'].copy()
                         if crddp.shape[0]>0:
                                 #st.write(crddp[['ART', 'AG','VD', 'ARVS','DSD']])
