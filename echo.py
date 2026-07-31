@@ -966,7 +966,7 @@ def extract():
     #         # Create an in-memory BytesIO buffer
                         output = io.BytesIO()
  
-                        st.write(dfc1)
+    
                         with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
                                 dfb11.to_excel(writer, sheet_name="B.1.1", index=False) 
                                 dfb2.to_excel(writer, sheet_name="B.2", index=False)
