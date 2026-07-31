@@ -723,9 +723,7 @@ def extract():
                             dfvl = df[df['Vyear']>2025]
                             dfnvl = df[df['Vyear']<2026]
                             #dfnvl = df[((df['Vyear']<vyear)|((df['Vyear']==vyear) & (df['Vmonth']<=vmonth)))].copy()
-                            st.write(vyear)
-                            st.write(vmonth)
-                            st.write(df)
+                            st.write(dfvl.shape[0])
                             
                             # st.write(dfnvl.shape[0])
 
