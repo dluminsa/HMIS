@@ -434,8 +434,6 @@ def extract():
                             dfca = dfc[((dfc['WT']>2.9) & (dfc['WT']<6))].copy()
            
                             a3b = dfc[((dfc['WT']>24.9) & (dfc['WT']<30))].copy()
-                            st.write(a3b)
-                            st.stop()
                             dfcx1 = pd.concat([dfca, a3b,a3cn])
                             a3 = dfcx1.shape[0]
                             st.write(a3)
