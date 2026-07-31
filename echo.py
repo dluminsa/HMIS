@@ -7,7 +7,7 @@ import time
 import streamlit as st
 
 def extract():
-    cola,colb,colc = st.columns([1,3,1]
+    cola,colb,colc = st.columns([1,3,1])
     st.subheader('PIVOT TABLES FOR ECHO DATA USE TX CURR, NOT EVER ENROLLED')
     st.image(r'rename.png')
     #VARIABLES
