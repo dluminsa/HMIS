@@ -438,13 +438,13 @@ def extract():
             
                             if a3 > 0:
                                  #st.write(dfc[['ART', 'AG', 'WT', 'ARVS']].reset_index(drop=True))
-                                dfc1 = dfc.groupby('WEIGHT BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                dfc1 = dfc1.groupby('WEIGHT BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
                                 dfc1 = pd.merge(dfc1, datyw, on='WEIGHT BANDS', how='right')
                                 dfc1['TOTAL'] = dfc1['TOTAL'].fillna(0)
                                 dfc1['R'] = dfc1['WEIGHT BANDS'].map(wmapper)
                                 dfc1 = dfc1.sort_values('R').drop(columns='R')
                                 st.write(dfc1)
-                                dfc2 = dfc.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                dfc2 = dfc1.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
                                 dfc2 = pd.merge(dfc2, datya, on='AGE BANDS', how='right')
                                 dfc2['TOTAL'] = dfc2['TOTAL'].fillna(0)
                                 dfc2['R'] = dfc2['AGE BANDS'].map(amapper)
