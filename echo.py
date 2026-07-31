@@ -12,13 +12,13 @@ def extract():
     st.image(r'rename.png')
     #VARIABLES
     lyear = 2026
-    lmonth = 3 #LAST MONTH OF THE SAID QTR
-    qmonths = [1,2,3] #MONTHS IN THE QUARTER
+    lmonth = 6 #LAST MONTH OF THE SAID QTR
+    qmonths = [4,5,6] #MONTHS IN THE QUARTER
 
     vyear = 2025 #VL DATE 6 MONTHS AGO
-    vmonth =9  #VL MONTH 6 MONTHS AGO
+    vmonth =12  #VL MONTH 6 MONTHS AGO
 
-    vmonths = [10,11,12]
+    vmonths = [1,2,3]
 
     facility = st.text_input('Enter Facility Name')
     if not facility:
@@ -668,6 +668,7 @@ def extract():
                                  dfg1['TOTAL'] = 0
                                 #  st.write(dfg1)
                                  dfg12 = dfg1.copy()
+                                
                             #NONE SUPPRESSORS
                             df[['Vyear', 'Vmonth']] = df[['Vyear', 'Vmonth']].apply(pd.to_numeric, errors='coerce')
                             has = df[((df['Vyear']>vyear)| ((df['Vyear']==vyear) & (df['Vmonth']>vmonth)))].copy()
