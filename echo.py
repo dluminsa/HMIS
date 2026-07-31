@@ -431,9 +431,10 @@ def extract():
                             #st.write(dfc[['ART','AG', 'WT', 'ARVS']])
                             dfc['WT'] = pd.to_numeric(dfc['WT'], errors='coerce')
                             dfc = dfc[((dfc['WT']>2.9) & (dfc['WT']<6))].copy()
+           
+                            a3b = dfc[((dfc['WT']>24.9) & (dfc['WT']<30))].copy()
                             st.write(a3b)
                             st.stop()
-                            a3b = dfc[((dfc['WT']>24.9) & (dfc['WT']<30))].copy()
                             dfcx1 = pd.concat([dfc, a3b,a3cn])
                             a3 = dfcx1.shape[0]
                             st.write(a3)
