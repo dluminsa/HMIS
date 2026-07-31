@@ -719,10 +719,10 @@ def extract():
                             #VL DATA
                             df[['Vyear', 'Vmonth']] = df[['Vyear', 'Vmonth']].apply(pd.to_numeric, errors='coerce')
                         
-                            #dfvl = df[((df['Vyear']>vyear)  |  ((df['Vyear']==vyear) & (df['Vmonth']>vmonth)))].copy()
-                            dfvl = df[df['Vyear']>2025]
-                            dfnvl = df[df['Vyear']<2026]
-                            #dfnvl = df[((df['Vyear']<vyear)|((df['Vyear']==vyear) & (df['Vmonth']<=vmonth)))].copy()
+                            dfvl = df[((df['Vyear']>vyear)  |  ((df['Vyear']==vyear) & (df['Vmonth']>vmonth)))].copy()
+                            # dfvl = df[df['Vyear']>2025]
+                            # dfnvl = df[df['Vyear']<2026]
+                            dfnvl = df[((df['Vyear']<vyear)|((df['Vyear']==vyear) & (df['Vmonth']<=vmonth)))].copy()
                             st.write(dfvl.shape[0])
                             
                             # st.write(dfnvl.shape[0])
