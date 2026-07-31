@@ -433,6 +433,7 @@ def extract():
                             dfc = dfc[((dfc['WT']>2.9) & (dfc['WT']<6))].copy()
                             a3b = dfc[((dfc['WT']>24.9) & (dfc['WT']<30))].copy()
                             a3 = pd.concat([dfc, a3b,a3cn])
+                            st.write(a3)
             
                             if a3 > 0:
                                  #st.write(dfc[['ART', 'AG', 'WT', 'ARVS']].reset_index(drop=True))
