@@ -438,7 +438,6 @@ def extract():
                             a3b = dfc[((dfc['WT']>24.9) & (dfc['WT']<30))].copy()
                             dfcx1 = pd.concat([dfca, a3b,a3cn])
                             a3 = dfcx1.shape[0]
-                            st.write(a3)
             
                             if a3 > 0:
                                  #st.write(dfc[['ART', 'AG', 'WT', 'ARVS']].reset_index(drop=True))
@@ -721,7 +720,7 @@ def extract():
                             df[['Vyear', 'Vmonth']] = df[['Vyear', 'Vmonth']].apply(pd.to_numeric, errors='coerce')
                             dfvl = df[((df['Vyear']>vyear)|((df['Vyear']==vyear) & (df['Vmonth']>vmonth)))].copy()
                             dfnvl = df[((df['Vyear']<vyear)|((df['Vyear']==vyear) & (df['Vmonth']<=vmonth)))].copy()
-                            st.write(dfvl)
+                            st.write(df)
                             # st.write(dfnvl.shape[0])
 
                             if dfvl.shape[0]>0: #THOSE WITH VLS
@@ -794,7 +793,7 @@ def extract():
                                 dfvk = dfvk[dfvk['VR']!=400].copy()
                                 #HLVS
                                 dfvj = dfvj[dfvj['VR']>999].copy()
-                                st.write(dfvj)
+                                #st.write(dfvj)
                                 
                                 if dfvj.shape[0]>0: #THE HLVS
                                      #st.write(dfvj[['ART', 'AG','VD', 'ARVS','VR']])
