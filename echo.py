@@ -443,7 +443,6 @@ def extract():
                                 dfc1['TOTAL'] = dfc1['TOTAL'].fillna(0)
                                 dfc1['R'] = dfc1['WEIGHT BANDS'].map(wmapper)
                                 dfc1 = dfc1.sort_values('R').drop(columns='R')
-                                st.write(dfc1)
                                 dfc2 = dfcx1.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
                                 dfc2 = pd.merge(dfc2, datya, on='AGE BANDS', how='right')
                                 dfc2['TOTAL'] = dfc2['TOTAL'].fillna(0)
@@ -457,7 +456,7 @@ def extract():
                                  dfc2 = datya.copy()
                                  dfc2['TOTAL'] = 0
                                 #  st.write(dfc2) 
-                            st.stop()
+                        
                             #pALD ELIGIBILITY BY AGE BANDS FROM THE WHOLE CURR C4
                             df['AG'] = pd.to_numeric(df['AG'], errors='coerce')
                             dfcpa =  df[(df['AG']<10)].copy()
@@ -980,10 +979,10 @@ def extract():
                                 dfb3.to_excel(writer, sheet_name="B.3", index=False)
                                 dfc1.to_excel(writer, sheet_name="C.1", index=False)
                                 dfc2.to_excel(writer, sheet_name="C.2", index=False)
-                                dfc2.to_excel(writer, sheet_name="C.4", index=False)
-                                dfc5.to_excel(writer, sheet_name="C.5", index=False)
-                                dfc1.to_excel(writer, sheet_name="C.6", index=False)
-                                dfc7.to_excel(writer, sheet_name="C.7", index=False)
+                                #dfc2.to_excel(writer, sheet_name="C.4", index=False)
+                                #dfc5.to_excel(writer, sheet_name="C.5", index=False)
+                                #dfc1.to_excel(writer, sheet_name="C.6", index=False)
+                                #dfc7.to_excel(writer, sheet_name="C.7", index=False)
                                 df3.to_excel(writer, sheet_name="F.3.2", index=False)
                                 dfg1.to_excel(writer, sheet_name="G.1", index=False)
                                 dfg12.to_excel(writer, sheet_name="G.1.2", index=False)
