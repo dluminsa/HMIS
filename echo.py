@@ -720,9 +720,9 @@ def extract():
                             df[['Vyear', 'Vmonth']] = df[['Vyear', 'Vmonth']].apply(pd.to_numeric, errors='coerce')
                         
                             dfvl = df[((df['Vyear']>vyear)  |  ((df['Vyear']==vyear) & (df['Vmonth']>vmonth)))].copy()
-                            st.write(df[['ART','VD', 'Vyear', 'Vmonth']])
+                            #st.write(df[['ART','VD', 'Vyear', 'Vmonth']])
                             dfnvl = df[((df['Vyear']<vyear)|((df['Vyear']==vyear) & (df['Vmonth']<=vmonth)))].copy()
-                            st.write(dfvl.shape[0])
+                           # st.write(dfvl.shape[0])
                             
                             # st.write(dfnvl.shape[0])
 
