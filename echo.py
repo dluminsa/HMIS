@@ -996,7 +996,7 @@ def extract():
                                 dfg2.to_excel(writer, sheet_name="G.2.1", index=False)
                                 dfh1.to_excel(writer, sheet_name="H", index=False)
                                 dfi.to_excel(writer, sheet_name="I.1", index=False)
-                                dfi2.to_excel(writer, sheet_name="I.2", index=False)
+                                dfi.to_excel(writer, sheet_name="I.2", index=False)
                                 dfi3.to_excel(writer, sheet_name="I.3", index=False)
                                 dfi4.to_excel(writer, sheet_name="I.4", index=False)
                                 dfj1.to_excel(writer, sheet_name="J.1.1", index=False)
