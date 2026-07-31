@@ -433,8 +433,7 @@ def extract():
                             dfc = dfc[((dfc['WT']>2.9) & (dfc['WT']<6))].copy()
                             a3b = dfc[((dfc['WT']>24.9) & (dfc['WT']<30))].copy()
                             a3 = pd.concat([dfc, a3b,a3cn])
-                            st.write(a3)
-                            st.stop()
+            
                             if a3 > 0:
                                  #st.write(dfc[['ART', 'AG', 'WT', 'ARVS']].reset_index(drop=True))
                                 dfc1 = dfc.groupby('WEIGHT BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
@@ -456,7 +455,8 @@ def extract():
                                  dfc2 = datya.copy()
                                  dfc2['TOTAL'] = 0
                                 #  st.write(dfc2) 
-                            
+                            st.write(dfc1)
+                            st.stop()
                             #pALD ELIGIBILITY BY AGE BANDS FROM THE WHOLE CURR C4
                             df['AG'] = pd.to_numeric(df['AG'], errors='coerce')
                             dfcpa =  df[(df['AG']<10)].copy()
