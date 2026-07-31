@@ -783,6 +783,7 @@ def extract():
                                 if dfvj.shape[0]>0: #THE HLVS
                                      #st.write(dfvj[['ART', 'AG','VD', 'ARVS','VR']])
                                     hlvs = dfvj[['ART', 'RD', 'VD', 'VR']].copy()
+                                    st.write(hlvs)
                                     hlvs['NEEDED'] = 'Check if they completed IACs as needed in section J'
                                     dfj1 = dfvj.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
                                     dfj2 = pd.merge(dfj1, datya, on='AGE BANDS', how='right')
