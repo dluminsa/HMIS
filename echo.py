@@ -834,18 +834,30 @@ def extract():
                             dfL = pd.DataFrame({ " ":['TOTAL'],
                                                         'CALHIV': [b11],
                                                         '': 'Total CALHIV in care'})
-                            dfL11 = datya.copy()
-                            dfL11['TOTAL'] = 0
-                            dfL11['NOTE'] = 'Only put zero if this facility has no teen clubs'
+                            # dfL11 = datya.copy()
+                            # dfL11['TOTAL'] = 0
+                            # dfL11['NOTE'] = 'Only put zero if this facility has no teen clubs'
                             #st.write(dfL12)
                            #MMD SECTION
                             df['ARVD'] = pd.to_numeric(df['ARVD'], errors = 'coerce')
 
-                            dfL1 = df[df['ARVD']>89].copy()
+                            dfL1 = df[df['ARVD']>79].copy()
                             dfL1['ARVD'] = pd.to_numeric(dfL1['ARVD'], errors = 'coerce')
 
                             #3 months
-                            dfL12 = dfL1[dfL1['ARVD'] < 179].copy()
+                            dfL11 = dfL1[dfL1['ARVD'] < 91].copy()
+                            if dfL11.shape[0] > 0:
+                                    #st.write(dfL11[['ART', 'AG','VD', 'ARVS','VR']])
+                                    dfL11 = dfL11.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
+                                    dfL11 = pd.merge(dfL11, datya, on='AGE BANDS', how='right')
+                                    dfL11['TOTAL'] = dfL11['TOTAL'].fillna(0)
+                                    dfL11['R'] = dfL11['AGE BANDS'].map(amapper)
+                                    dfL11 = dfL11.sort_values('R').drop(columns='R').reset_index(drop=True)
+                            else:
+                                dfL11 = datya.copy()
+                                dfL12['TOTAL'] = 0
+                            #4 to 5 months
+                            dfL12 = dfL1[((dfL1['ARVD'] >90) & (dfL1['ARVD'] < 151)].copy()
                             if dfL12.shape[0] > 0:
                                     #st.write(dfL12[['ART', 'AG','VD', 'ARVS','VR']])
                                     dfL12 = dfL12.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
@@ -856,10 +868,9 @@ def extract():
                                     # st.write(dfL12)
                             else:
                                 dfL12 = datya.copy()
-                                dfL12['TOTAL'] = 0
                                  
                             #6 MONTHS
-                            dfL13 = dfL1[dfL1['ARVD'] >= 180].copy()
+                            dfL13 = dfL1[dfL1['ARVD'] >= 150].copy()
                             if dfL13.shape[0] > 0:
                                     #st.write(dfL13[['ART', 'AG','VD', 'ARVS','VR']])
                                     dfL13 = dfL13.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
@@ -999,9 +1010,9 @@ def extract():
                                 dfj1.to_excel(writer, sheet_name="J.1.1", index=False)
                                 dfk1.to_excel(writer, sheet_name="K.1.1", index=False)
                                 dfL.to_excel(writer, sheet_name="L", index=False)
-                                dfL11.to_excel(writer, sheet_name="L.1.1", index=False)
-                                dfL12.to_excel(writer, sheet_name="L.1.2", index=False)
-                                dfL13.to_excel(writer, sheet_name="L.1.3", index=False)
+                                dfL11.to_excel(writer, sheet_name="L.1.1-MMD<3", index=False)
+                                dfL12.to_excel(writer, sheet_name="L.1.1-MMD<5", index=False)
+                                dfL13.to_excel(writer, sheet_name="L.1.3-MMD>6", index=False)
                                 cddp.to_excel(writer, sheet_name="L.1.4(CDDP)", index=False)
                                 cclad.to_excel(writer, sheet_name="L.1.5(CCLAD)", index=False)
                                 crddp.to_excel(writer, sheet_name="L.1.6(CRPDDP)", index=False)
