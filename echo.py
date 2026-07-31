@@ -501,9 +501,11 @@ def extract():
                             dfcpc = df[(df['WT']>5.9) & (df['WT']<25)].copy()
 
                             if dfcpc.shape[0] >0:
+                                dfc6 = dfc6[~dfc6['WEIGHT BANDS'].isin(['25-29.9 KG', '>= 30 KG'])].copy()
                                 dfc6 = dfcpc.groupby('WEIGHT BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
                                 c6map = {'3-5.9 KG':1, '6-9.9 KG':2, '10-13.9 KG':3, '14-19.9 KG':4, '20-24.9 KG':5}
                                 dfc6['R'] = dfc6['WEIGHT BANDS'].map(c6map)
+                                dfc6 = dfc6['R
                                 dfc6 = dfc6.sort_values('R').drop(columns='R').reset_index(drop=True)
                                 # st.write(dfc6)
 
