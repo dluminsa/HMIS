@@ -435,7 +435,6 @@ def extract():
                             dfc1 = pd.concat([dfc, a3b,a3cn])
                             a3 = dfc1.shape[0]
                             st.write(a3)
-                            st.write(dfc1)
             
                             if a3 > 0:
                                  #st.write(dfc[['ART', 'AG', 'WT', 'ARVS']].reset_index(drop=True))
@@ -444,7 +443,7 @@ def extract():
                                 dfc1['TOTAL'] = dfc1['TOTAL'].fillna(0)
                                 dfc1['R'] = dfc1['WEIGHT BANDS'].map(wmapper)
                                 dfc1 = dfc1.sort_values('R').drop(columns='R')
-                                # st.write(dfc1)
+                                st.write(dfc1)
                                 dfc2 = dfc.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
                                 dfc2 = pd.merge(dfc2, datya, on='AGE BANDS', how='right')
                                 dfc2['TOTAL'] = dfc2['TOTAL'].fillna(0)
@@ -458,7 +457,6 @@ def extract():
                                  dfc2 = datya.copy()
                                  dfc2['TOTAL'] = 0
                                 #  st.write(dfc2) 
-                            st.write(dfc1)
                             st.stop()
                             #pALD ELIGIBILITY BY AGE BANDS FROM THE WHOLE CURR C4
                             df['AG'] = pd.to_numeric(df['AG'], errors='coerce')
