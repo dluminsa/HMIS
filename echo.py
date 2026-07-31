@@ -114,6 +114,8 @@ def extract():
                         y = pd.DataFrame({'ART' :['2','3','4','5'], 'RD':['1-1-1',1,'1/1/1','3 8 2001'], 'AS':['1-1-1',1,'1/1/1','3 8 2001'],
                                         'VD':['1-1-1',1,'1/1/1','3 8 2001'], 'LD':['1-1-1',1,'1/1/1','3 8 2001'],'ARVS':['1-1-1-1-1',1,'1/1/1/1/1','3 8 2001 4 6']})                        
                         
+                        df['VR'] = pd.to_numeric(df['VR'], errors='coerce')
+                        df['VR'] = df['VR'].fillna(10)
                         df['RD'] = df['RD'].astype(str)
                         df['AS'] = df['AS'].astype(str)
                         df['VD'] = df['VD'].astype(str)      
@@ -883,6 +885,7 @@ def extract():
                                 dfL13['TOTAL'] = 0
                         
                         df['DSD'] =  df['DSD'].astype(str)
+                        df = df[df['ARVD']>79].copy()
                         dmap = {
                              'Community Drug Distribution Point': 'CDDP',
                              'Community Client Led ART Delivery': 'GCLAD',
@@ -898,8 +901,7 @@ def extract():
                         df['DSDM'] = df['DSD'].map(dmap)
                         df['DSDM'] = df['DSDM'].astype(str)
                         
-
-                        cddp = df[df['DSDM']== 'CDDP'].copy()
+                        cddp = df[df['DSDM'].isin(['FBG', 'CDDP'])].copy()
                         if cddp.shape[0]>0:
                                 #st.write(cddp[['ART', 'AG','VD', 'ARVS','DSD']])
                                 cddp = cddp.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
@@ -952,20 +954,7 @@ def extract():
                         else:
                                 fbim = datya.copy()
                                 fbim['TOTAL'] = 0 
-                                #st.write(fbim)
-
-                        fbg = df[df['DSDM']== 'FBG'].copy()
-                        if fbg.shape[0]>0:
-                                #st.write(fbg[['ART', 'AG','VD', 'ARVS','DSD']])
-                                fbg = fbg.groupby('AGE BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
-                                fbg = pd.merge(fbg, datya, on='AGE BANDS', how='right')
-                                fbg['TOTAL'] = fbg['TOTAL'].fillna(0)
-                                fbg['R'] = fbg['AGE BANDS'].map(amapper)
-                                fbg = fbg.sort_values('R').drop(columns='R').reset_index(drop=True)
-                                #st.write(fbg)
-                        else:
-                                fbg = datya.copy()
-                                fbg['TOTAL'] = 0   
+                                #st.write(fbim)  
                         
                         ftdr = df[df['DSDM']== 'FTDR'].copy()
                         if ftdr.shape[0]>0:
@@ -1012,12 +1001,13 @@ def extract():
                                 dfL11.to_excel(writer, sheet_name="L.1.1-MMD<3", index=False)
                                 dfL12.to_excel(writer, sheet_name="L.1.1-MMD<5", index=False)
                                 dfL13.to_excel(writer, sheet_name="L.1.3-MMD>6", index=False)
-                                cddp.to_excel(writer, sheet_name="L.1.4(CDDP)", index=False)
-                                cclad.to_excel(writer, sheet_name="L.1.5(CCLAD)", index=False)
-                                crddp.to_excel(writer, sheet_name="L.1.6(CRPDDP)", index=False)
-                                fbim.to_excel(writer, sheet_name="L.1.7(FBIM)", index=False)
-                                fbg.to_excel(writer, sheet_name="L.1.8(FBG)", index=False)
-                                ftdr.to_excel(writer, sheet_name="L.1.9(FTDR)", index=False)                            
+                                cddp.to_excel(writer, sheet_name="L.1.4(GMH)", index=False)
+                                cclad.to_excel(writer, sheet_name="L.1.5(GMC)", index=False)
+                                ftdr.to_excel(writer, sheet_name="L.1.6(IMC-FTDR)", index=False) 
+                                fbim.to_excel(writer, sheet_name="L.1.7I(IMC-FBIM)", index=False)
+                                yaps.to_excel(writer, sheet_name="L.1.8(IMC-YAPS)", index=False)
+                                crddp.to_excel(writer, sheet_name="L.1.9(IMC-CRPDDP)", index=False)
+                                                           
 
                                 output.seek(0) 
 
