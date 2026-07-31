@@ -412,6 +412,9 @@ def extract():
 
                             df[['TDF', 'DTG']] = df[['TDF', 'DTG']].astype(str)
                             dfc = df[((df['TDF']=='ABC') & (df['DTG']=='DTG'))].copy()
+                            dfc2 = df[((df['TDF']=='TDF') & (df['DTG']=='DTG'))].copy()
+                            
+                            a3cn = dfc2[(dfc['WT']>29.9)].copy()
                             dfn = df[~((df['TDF']=='ABC') & (df['DTG']=='DTG'))].copy()
                             a1 = dfc.shape[0]
                             a2 = b11 - a1
@@ -428,7 +431,10 @@ def extract():
                             #st.write(dfc[['ART','AG', 'WT', 'ARVS']])
                             dfc['WT'] = pd.to_numeric(dfc['WT'], errors='coerce')
                             dfc = dfc[((dfc['WT']>2.9) & (dfc['WT']<6))].copy()
-                            a3 = dfc.shape[0]
+                            a3b = dfc[((dfc['WT']>24.9) & (dfc['WT']<30))].copy()
+                            a3 = pd.concat([dfc, a3b,a3cn])
+                            st.write(a3)
+                            st.stop()
                             if a3 > 0:
                                  #st.write(dfc[['ART', 'AG', 'WT', 'ARVS']].reset_index(drop=True))
                                 dfc1 = dfc.groupby('WEIGHT BANDS')['ART'].size().reset_index().rename(columns={'ART': 'TOTAL'})
