@@ -28,7 +28,7 @@ def extract():
          pass   
     
 
-    file = st.file_uploader(f"Upload a CSV containing the {facility}'s TX CURR", type=['csv']) 
+    file = st.file_uploader(f"Upload a CSV containing the {facility}'s TX CURR", type=['csv','xlsx']) 
     if file is not None:        
         st.session_state.df = None
         time.sleep(1)
@@ -40,7 +40,10 @@ def extract():
    
 
     if file is not None:
-                    st.session_state.df = pd.read_csv(file)
+                    try:
+                        st.session_state.df = pd.read_csv(file)
+                    except:
+                        st.session_state.df = pd.read_excel(file)
                     df = st.session_state.df
     
                     df = df.rename(columns= {'ART  ':'ART',  'RD  ':'RD', 'DSD  ':'DSD', 'VD  ':'VD', 'LD  ': 'LD','ARVS  ':'ARVS', 'ARVD ':'ARVD','BCD4  ':'BCD4','AG  ':'AG', 'AS  ':'AS', 'WT  ':'WT', 'VR  ':'VR'})#, 'TPT ': 'TPT'})  
