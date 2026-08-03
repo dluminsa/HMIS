@@ -861,7 +861,7 @@ def extract():
                                     dfL11 = dfL11.sort_values('R').drop(columns='R').reset_index(drop=True)
                             else:
                                 dfL11 = datya.copy()
-                                dfL12['TOTAL'] = 0
+                                dfL11['TOTAL'] = 0
                             #4 to 5 months
                             dfL12 = dfL1[((dfL1['ARVD'] >90) & (dfL1['ARVD'] < 151))].copy()
                             if dfL12.shape[0] > 0:
