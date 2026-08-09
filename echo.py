@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import time
 import streamlit as st
+st.stop()
 
 def extract():
     cola,colb,colc = st.columns([1,3,1])
