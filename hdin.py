@@ -9,16 +9,22 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 import streamlit as st
-import gspread
 from openpyxl import load_workbook
-from google.oauth2.service_account import Credentials
-from streamlit_gsheets import GSheetsConnection
+#from google.oauth2.service_account import Credentials
+#from streamlit_gsheets import GSheetsConnection
+pwd = st.text_input('Enter password', type='password')
+
+if pwd != 'des':
+     st.stop()
+else:
+     pass
 
 
 
 #Clear cache at the very start of the app
 st.cache_data.clear()
 st.cache_resource.clear()
+st.write('ART, AG, GD,AS, VD, RD,TO, TI ,DD , FE, LD, RD1, RD2, ARVD, NTO, DSD, ARVL, CD, DSDM, VR')
 
 def extract():
     cola,colb,colc = st.columns([1,3,1])
@@ -637,55 +643,48 @@ def extract():
 
         ################################ PARAMETERS ############################################
                         #Q1 parameters
-                        b1year = 2025 #one year ago the upper limit for bbtc, goes with lmonth and lday
-                        b2year = 2024 #one year ago the lower limit for bbtc, goes with lmonth and lday
-
+                 
                         cyear = 2026  #curr year
                         cyp = 2027 # a year after
                         cyp1 = cyp +1
-                        cmonth = 3 #last month of the qtr
-                        cml = 2 # a month before
-                        cmp = 4 # a month after
-                        cday  = 4 #starting day
-                        cdp = 5   # a day after
-                        cdm = 3 #a day before
-                        qmonths = [1,2,3] # months of the qtr
+                        cmonth = 9 #last month of this qtr
+                        cmp = 10 # a month after
+                        cday  = 3 #starting day
+                        cdm = 2 #a day before
+                        qmonths = [7,8,9] # months of the qtr
 
-                        lmonth = 12 # last qtr month, used for txcur
-                        lyear = 2025 # last qtr  year
-                        lday = 4  #last qtr day
-                        ldp = 5 # a day after
-                        ldm = 3 # a day before
+                        lmonth = 6 # last qtr month, used for txcur
+                        lyear = 2026 # last qtr  year
+                        lday = 3  #last qtr day
+                        ldm = 2 # a day before
 
                         oyear = 2025  #the year for one year cohort
 
                         vyeara = 2025 # current vl year
-                        vmonth = 3 # last vl month for those with (>) lowest limit, for has
-                        vmm = 4  # a month after for those without (<) for lacks
-                        vayear = 2025 #for art start date in vl, cutt of six months
-                        vamonth = 10 # for art start date in vl cutt off sixmonth <
-                        qt6 = 'Q4' #the qtr for six months ago
+                        vmm = 10    # cut off month for VL, first month of next qtr, (watch out for Q1)
+                        vayear = 2026 #for art start date in vl, cutt of six months
+                        vamonth = 4 # for art start date in vl cutt off sixmonth <
 
-                        fmonth =  1 # first month of this current qtr
 
-                        qtr = 'Q1' #the previous qtr column from clusters.csv
+                        fmonth =  7 # first month of this current qtr
+
+                        #qtr = 'Q2' #the previous qtr column from clusters.csv
 
                         #NEXT QTR PARAMETERS
                         nyear = 2026
-                        nmonth = 4 #startin month of next qtr
-
-                        #6months ago months
-                        q6months = [7,8,9]
+                        nmonth = 10 #starting month of next qtr
                         
-                        q6year = 2025
+                    ########THESE ARE NOT FROM PROGRAM GROWTH
+                        #6months ago months
+                        q6months = [1,2,3]
+                        
+                        q6year = 2026
                         #####
                         year24 = 2024 # FOR 24 months cohort
 
                         #MONTHS FOR COLUMN 1 IN COHORTS
-                        mths6 = 'JUL-SEP'
-                        onyr = 'JAN-MAR'
-                        
-                        
+                        mths6 = 'JAN-MAR'
+                        onyr = 'JUL-SEP'
         
 ##################################################################################################################################
                         #POTENTIAL TXCUR ALTER... 
@@ -944,13 +943,14 @@ def extract():
 
                         dfacv[['Lyear', 'Lmonth']] = dfacv[['Lyear', 'Lmonth']].apply(pd.to_numeric, errors='coerce')
                         scr = dfacv[((dfacv['Lyear']==cyear) & (dfacv['Lmonth'].isin(qmonths)))].copy()
-                        dfhc18_scr = scr[['ART', 'GD', 'AGE BAND','A' ]].copy()
+                        dfhc23_scr = scr[['ART', 'GD', 'AGE BAND','A' ]].copy()
                         
 
-                        dfhc18_scr['A'] = pd.to_numeric(dfhc18_scr['A'], errors='coerce')
+                        dfhc23_scr['A'] = pd.to_numeric(dfhc23_scr['A'], errors='coerce')
                         newly['A'] = pd.to_numeric(newly['A'], errors='coerce')
-                        dfhc19_scr = dfhc18_scr[~dfhc18_scr['A'].isin(newly['A'] )].copy()
-                                     
+                        dfhc19_scr = dfhc23_scr[~dfhc23_scr['A'].isin(newly['A'] )].copy()  
+                        dfhc19_scr['A'] = pd.to_numeric(dfhc19_scr['A'], errors='coerce')
+                        dfhc18_scr = dfhc23_scr[~dfhc23_scr['A'].isin(dfhc19_scr['A'] )].copy()         
                         
                         b1 = dfst.shape[0]
                         c1 = dfscd.shape[0]
@@ -1009,7 +1009,7 @@ def extract():
                         dfhc29_elig = has[['ART', 'AGE BAND', 'GD']].copy()
                         #BLED
                         has[['Vyear', 'Vmonth']] = has[['Vyear', 'Vmonth']].apply(pd.to_numeric, errors='coerce')
-                        has = has[((has['Vyear'] > vyeara) | ((has['Vyear'] == vyeara) & (has['Vmonth']> vmonth)))].copy()
+                        has = has[((has['Vyear'] > vyeara) | ((has['Vyear'] == vyeara) & (has['Vmonth']>=vmm)))].copy()
                         dfhc29_test = has[['ART', 'AGE BAND', 'GD']].copy()
                         has['VR'] = pd.to_numeric(has['VR'], errors = 'coerce')
                         has = has[has['VR']<1000].copy()
@@ -1041,7 +1041,7 @@ def extract():
                             
                             
                             orig6 = new6[new6['Tiyear']==994].copy()
-                            st.write(orig6)
+                            # st.write(orig6)
                             if orig6.shape[0]>0:
                                 orig6['CD'] = pd.to_numeric(orig6['CD'], errors='coerce')
                                 #  orig6a = orig6[['AGE_BANDS', 'ART']].copy()
@@ -1075,7 +1075,7 @@ def extract():
                             new6lost = new6[~new6['A'].isin(dfcur['A'])].copy()
                             new6lost['Tyear'] = pd.to_numeric(new6lost['Tyear'], errors='coerce')
                             new6losto = new6lost[new6lost['Tyear']!=994].copy()
-                            st.write('HERE')
+                            # st.write('HERE')
                             
             
                             new6lost = new6lost[new6lost['Tyear']==994].copy()
@@ -1087,7 +1087,7 @@ def extract():
                                     dato = daty['AGE_BANDS']
                                     out6 = pd.merge(dato, out6, on ='AGE_BANDS', how='left')
                                     out6['5'] = out6['5'].fillna(0)
-                                    st.write(out6)
+                                    # st.write(out6)
                                     
                             else:
                                     out6 = datx.rename(columns={'1':'5'})
@@ -1255,7 +1255,7 @@ def extract():
                             if newcur.shape[0] > 0:
                                     activ = newcur.groupby('AGE_BANDS')['ART'].size().reset_index()
                                     newcur['VR'] = pd.to_numeric(newcur['VR'], errors='coerce')
-                                    supx = newcur[newcur['VR'] <1000].copy()
+                                    supx = newcur[(newcur['VR'] <1000) & (newcur['Vday'].notnull())].copy()
                                     activ = activ.rename(columns={'ART':'11'})
                                     if supx.shape[0] > 0:
                                          supx = supx.groupby('AGE_BANDS')['ART'].size().reset_index()
@@ -1264,7 +1264,8 @@ def extract():
                                          supx = datx.rename(columns={'1':'12'})
                                     
                             else:
-                                    newcur = datx.rename(columns={'1':'11'})
+                                    activ = datx.rename(columns={'1':'11'})
+                                    supx = datx.rename(columns={'1':'12'})
                             df1 = pd.merge(daty,origa, on='AGE_BANDS', how='left')
                             df1['2'] = df1['2'].fillna(0)
 
@@ -1277,9 +1278,9 @@ def extract():
 
                             df1 = pd.merge(df1,out, on='AGE_BANDS', how='left')
                             try:
-                                df2a['5'] = df2a['5'].fillna(0)
+                                df1['5'] = df1['5'].fillna(0)
                             except:
-                                df2a['5'] = 0
+                                df1['5'] = 0
 
                             df1 = pd.merge(df1,stop, on='AGE_BANDS', how='left')
                             df1['7'] = df1['7'].fillna(0)
@@ -1376,7 +1377,7 @@ def extract():
                                     out24 = out24.rename(columns={'ART':'5'})
                                     dato = daty['AGE_BANDS']
                                     out24 = pd.merge(dato, out24, on ='AGE_BANDS', how='left')
-                                    out24['5'] = out['5'].fillna(0)
+                                    out24['5'] = out24['5'].fillna(0)
                                     
                             else:
                                     out24 = datx.rename(columns={'1':'5'})
@@ -1401,7 +1402,7 @@ def extract():
                             if newcur.shape[0] > 0:
                                     activ4 = newcur.groupby('AGE_BANDS')['ART'].size().reset_index()
                                     newcur['VR'] = pd.to_numeric(newcur['VR'], errors='coerce')
-                                    sup24 = newcur[newcur['VR'] <1000].copy()
+                                    sup24 = newcur[(newcur['VR'] <1000) & (newcur['Vday'].notnull())].copy()
                                     activ4 = activ4.rename(columns={'ART':'11'})
                                     if sup24.shape[0] > 0:
                                          sup24 = sup24.groupby('AGE_BANDS')['ART'].size().reset_index()
@@ -1410,7 +1411,8 @@ def extract():
                                          sup24 = datx.rename(columns={'1':'12'})
                                     
                             else:
-                                    newcur = datx.rename(columns={'1':'11'})
+                                    activ4 = datx.rename(columns={'1':'11'})
+                                    sup24 = datx.rename(columns={'1':'12'})
                             df2b = pd.merge(daty,orig4a, on='AGE_BANDS', how='left')
                             df2b['2'] = df2b['2'].fillna(0)
 
@@ -1527,8 +1529,7 @@ def extract():
                         dfRTT = dfRTT.copy()
                         dfRTT['A'] = pd.to_numeric(dfRTT['A'], errors='coerce')
                         dfcur['A'] = pd.to_numeric(dfcur['A'], errors='coerce')
-                        rtt = dfRTT[dfRTT['A'].isin(dfcur['A'])].copy()
-                        rtta = rtt.shape[0]  
+                       
         ################################################################################################################
         #LIN   # dat = dat[['ART No.', 'RETURN DATE',  'LAST ENCOUNTER', 'TPT STATUS','LIKELIHOOD']].copy() 
     #################################################
@@ -1760,12 +1761,30 @@ def extract():
                    dfdar.to_excel(writer, sheet_name="HC14_DIED", index=False)
                    dfdar.to_excel(writer, sheet_name="HC15", index=False)
 
-                if dfhc01.shape[0]>0:
-                        hc01.to_excel(writer, sheet_name="HC18_scr", index=False)
-                else:
+                # if dfhc01.shape[0]>0: 
+                #         hc01.to_excel(writer, sheet_name="HC18_scr", index=False)
+                # else:
+                #    dfdar.to_excel(writer, sheet_name="HC18_scr", index=False)
+                if dfhc18_scr.shape[0]>0:
+                        #st.write(dfhc18_scr)
+                        hc18_scr = dfhc18_scr.groupby(['AGE BAND', 'GD']).size().unstack(fill_value=0)
+                        hc18_scr = hc18_scr.reindex(columns=['M', 'F'], fill_value=0)
+                        hc18_scr = hc18_scr.reset_index()
+                        hc18_scr = pd.merge(dfcomp, hc18_scr, on='AGE BAND', how='left')
+                        hc18_scr['M'] = hc18_scr['M'].fillna(0)
+                        hc18_scr['F'] = hc18_scr['F'].fillna(0) 
+                        # hc18_scr['AGE BAND'] = hc18_scr['AGE BAND'].astype(str)
+                        hc18_scr['SORT'] = hc18_scr['AGE BAND'].map(mapper)
+                        hc18_scr['SORT'] = pd.to_numeric(hc18_scr['SORT'], errors='coerce')
+                        hc18_scr = hc18_scr.sort_values(by ='SORT')
+                        hc18_scr = hc18_scr.drop(columns='SORT')
+                        hc18_scr.to_excel(writer, sheet_name="HC18_scr", index=False)
+                        
+                else:  
                    dfdar.to_excel(writer, sheet_name="HC18_scr", index=False)
 
                 if dfhc19_scr.shape[0]>0:
+                        #st.write(dfhc19_scr)
                         hc19_scr = dfhc19_scr.groupby(['AGE BAND', 'GD']).size().unstack(fill_value=0)
                         hc19_scr = hc19_scr.reindex(columns=['M', 'F'], fill_value=0)
                         hc19_scr = hc19_scr.reset_index()
@@ -1778,22 +1797,23 @@ def extract():
                         hc19_scr = hc19_scr.sort_values(by ='SORT')
                         hc19_scr = hc19_scr.drop(columns='SORT')
                         hc19_scr.to_excel(writer, sheet_name="HC19_scr", index=False)
-                else:
+                        
+                else:  
                    dfdar.to_excel(writer, sheet_name="HC19_scr", index=False)
 
-                if dfhc18_scr.shape[0]>0:
-                        hc18_scr = dfhc18_scr.groupby(['AGE BAND', 'GD']).size().unstack(fill_value=0)
-                        hc18_scr = hc18_scr.reindex(columns=['M', 'F'], fill_value=0)
-                        hc18_scr = hc18_scr.reset_index()
-                        hc18_scr = pd.merge(dfcomp, hc18_scr, on='AGE BAND', how='left')
-                        hc18_scr['M'] = hc18_scr['M'].fillna(0)
-                        hc18_scr['F'] = hc18_scr['F'].fillna(0) 
-                        # hc18_scr['AGE BAND'] = hc18_scr['AGE BAND'].astype(str)
-                        hc18_scr['SORT'] = hc18_scr['AGE BAND'].map(mapper)
-                        hc18_scr['SORT'] = pd.to_numeric(hc18_scr['SORT'], errors='coerce')
-                        hc18_scr = hc18_scr.sort_values(by ='SORT')
-                        hc18_scr = hc18_scr.drop(columns='SORT')
-                        hc18_scr.to_excel(writer, sheet_name="HC23_scr", index=False)
+                if dfhc23_scr.shape[0]>0:
+                        hc23_scr = dfhc23_scr.groupby(['AGE BAND', 'GD']).size().unstack(fill_value=0)
+                        hc23_scr = hc23_scr.reindex(columns=['M', 'F'], fill_value=0)
+                        hc23_scr = hc23_scr.reset_index()
+                        hc23_scr = pd.merge(dfcomp, hc23_scr, on='AGE BAND', how='left')
+                        hc23_scr['M'] = hc23_scr['M'].fillna(0)
+                        hc23_scr['F'] = hc23_scr['F'].fillna(0) 
+                        # hc23_scr['AGE BAND'] = hc23_scr['AGE BAND'].astype(str)
+                        hc23_scr['SORT'] = hc23_scr['AGE BAND'].map(mapper)
+                        hc23_scr['SORT'] = pd.to_numeric(hc23_scr['SORT'], errors='coerce')
+                        hc23_scr = hc23_scr.sort_values(by ='SORT')
+                        hc23_scr = hc23_scr.drop(columns='SORT')
+                        hc23_scr.to_excel(writer, sheet_name="HC23_scr", index=False)
                 else:
                    dfdar.to_excel(writer, sheet_name="HC23_scr", index=False)
 
@@ -2004,4 +2024,3 @@ pg = st.navigation(pages)
 pg.run()
                                 
     
-

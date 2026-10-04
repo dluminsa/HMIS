@@ -427,49 +427,66 @@ def extract():
                         dfcompp = pd.DataFrame(datyx)
                 
                         
-        ################################ PARAMETERS ############################################
-                        #Q1 parameters
-                        byear = 2024 #one year ago
-                        cyear = 2025  #curr year
-                        cyp = 2026 # a year after
-                        cyp1 = cyp +1
-                        cmonth = 12 #last month of the qtr
-                        cml = 11 # a month before
-                        cmp = 13 # a month after
-                        cday  = 4 #starting day
-                        cdp = 5   # a day after
-                        cdm = 3 #a day before
-                        qmonths = [10,11,12] # months of the qtr
-                        lmonth = 9 # last qtr month
-        
-                        lyear = 2025 # last qtr 
-                        lday = 3  #last qtr day
-                        ldp = 4 # a day after
-                        ldm = 2 # a day before
-                        vyeara = 2025 # current vl year
-                        vyearb = 2024 # last vl year
-                        vmonth = 0 # last vl month
-                        vmm = 1  # a month after
-                        oyear = 2024  #making one year
-                        vayear = 2025 #for art start date in vl
-                        vamonth = 7 # for art start date in vl
-                        fmonth =  10 # first month of this qtr
-                        tmonths = [7,8,9] # months of last qtr
-                        ltmonth = 10 #first month of this qtr not eligible for DSD
-                        m1 = 10
-                        m2 = 11
-                        m3 = 12 ####months of this qtr
-                        tpy = 2025
-                        tpm = 4
-                        tpl = 3  ###MAKING 6 months on ART
+         ################################ PARAMETERS ############################################
+
+                     
 
                         #6months ago months
-                        q6months = [4,5,6]
-                        q6m = 4
+                        q6months = [7,8,9]
+                        
                         q6year = 2025
                         #####
-                        q1yr = 2025
-                        year24 = 2023 # FOR 24 months cohort
+                        year24 = 2024 # FOR 24 months cohort
+
+                        #MONTHS FOR COLUMN 1 IN COHORTS
+                        mths6 = 'OCT-NOV'
+                        onyr = 'APR-JUN'
+###############################################################################################
+                        #Q1 parameters
+                        b1year = 2025 #one year ago the upper limit for bbtc, goes with lmonth and lday
+                        b2year = 2024 #one year ago the lower limit for bbtc, goes with lmonth and lday
+
+                        cyear = 2026  #curr year
+                        cyp = 2027 # a year after
+                        cyp1 = cyp +1
+                        cmonth = 6 #last month of this qtr
+                        cmp = 7 # a month after
+                        cday  = 3 #starting day
+                        cdm = 2 #a day before
+                        qmonths = [4, 5, 6] # months of the qtr
+
+                        lmonth = 3 # last qtr month, used for txcur
+                        lyear = 2026 # last qtr  year
+                        lday = 4  #last qtr day
+                        ldm = 3 # a day before
+
+                        oyear = 2025  #the year for one year cohort
+
+                        vyeara = 2025 # current vl year
+                        vmm = 7   # cut off month for VL, first month of next qtr, (watch out for Q1)
+                        vayear = 2026 #for art start date in vl, cutt of six months
+                        vamonth = 0 # for art start date in vl cutt off sixmonth <
+
+
+                        fmonth =  4 # first month of this current qtr
+
+                        qtr = 'Q2' #the previous qtr column from clusters.csv
+
+                        #NEXT QTR PARAMETERS
+                        nyear = 2026
+                        nmonth = 7 #starting month of next qtr
+                        
+                    ########THESE ARE NOT FROM PROGRAM GROWTH
+                        #6months ago months
+                        q6months = [10,11,12]
+                        
+                        q6year = 2025
+                        #####
+                        year24 = 2024 # FOR 24 months cohort
+
+                        #MONTHS FOR COLUMN 1 IN COHORTS
+                        mths6 = 'OCT-DEC'
+                        onyr = 'APR-JUN'
                         
         
 ##################################################################################################################################
@@ -813,8 +830,8 @@ pages = {
         st.Page(extract, title="EMR EXTRACT READER"),
     ],
     "QUARTERLY:":[
-        st.Page("qtr.py", title="DASHBOARD"),
-        ]
+        st.Page("hdin.py", title="DASHBOARD"),]
+
 }
 
 pg = st.navigation(pages)
